@@ -4,18 +4,30 @@ using UnityEngine;
 
 public abstract class Player : MonoBehaviour
 {
-	protected int ID;
-	protected float health;
-	protected float mana;
-	protected float speed;
-	protected float forceForJump;
-	protected Spell[] spells;
-	protected Spell currentHealSpell;
-	protected Spell currentFirstDamageSpell;
-	protected Spell currentSecondDamageSpell;
+    [SerializeField] protected int ID;
+    [SerializeField] protected float maxHealth;
+    [SerializeField] protected float health;
+    [SerializeField] protected float maxMana;
+    [SerializeField] protected float mana;
+    [SerializeField] protected float speed;
+    [SerializeField] protected float forceForJump;
+    [SerializeField] protected float currentCoolDownHeal;
+    [SerializeField] protected float currentCoolDownFirstDamage;
+    [SerializeField] protected float currentCoolDownSecondDamage;
+    
+    
+    protected Rigidbody _rigidbody;
+    protected Spell[] spells;
+    protected Spell currentHealSpell;
+    protected Spell currentFirstDamageSpell;
+    protected Spell currentSecondDamageSpell;
 
-	protected abstract void UseSpell(Spell spell);
-	protected abstract void Move();
-	protected abstract void Jump();
-	protected abstract void Death();
+    protected abstract void UseFirstDamgeSpell();
+    protected abstract void UseSecondDamgeSpell();
+    protected abstract void UseHealSpell();
+    protected abstract void Move();
+    protected abstract void Jump();
+    protected abstract void Death();
+    
+    
 }

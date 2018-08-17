@@ -18,12 +18,15 @@
           <e p="Bonuses.cs" t="Include" />
           <e p="Checkpoint.cs" t="Include" />
           <e p="Enemy.cs" t="Include" />
+          <e p="EscapeMenu.cs" t="Include" />
           <e p="Fox.cs" t="Include" />
           <e p="GameCanvas.cs" t="Include" />
           <e p="GameInformation.cs" t="Include" />
+          <e p="HealhManaController.cs" t="Include" />
           <e p="HealtAndManaBar.cs" t="Include" />
           <e p="Level.cs" t="Include" />
           <e p="MainMenu.cs" t="Include" />
+          <e p="PauseMenu.cs" t="Include" />
           <e p="Player.cs" t="Include" />
           <e p="Spell.cs" t="Include" />
           <e p="Spells.cs" t="Include" />

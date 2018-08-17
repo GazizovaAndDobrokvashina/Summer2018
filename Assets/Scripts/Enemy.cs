@@ -3,7 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : Player {
-	protected override void UseSpell(Spell spell)
+
+	public void TakeDamage(float damage)
+	{
+		health -= damage;
+	}
+	
+	protected override void UseFirstDamgeSpell()
+	{
+		throw new System.NotImplementedException();
+	}
+
+	protected override void UseSecondDamgeSpell()
+	{
+		throw new System.NotImplementedException();
+	}
+
+	protected override void UseHealSpell()
 	{
 		throw new System.NotImplementedException();
 	}

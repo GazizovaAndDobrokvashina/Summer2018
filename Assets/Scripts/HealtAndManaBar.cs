@@ -51,18 +51,18 @@ public class HealtAndManaBar : MonoBehaviour {
 	{
 		RectTransform rect = slider.GetComponent<RectTransform>();
 
-		int rectDeltaX = Screen.width/width;
+		int rectDeltaX = 250;
 		float rectPosX = 0;
 
 		if(isRight) 
 		{
 			rectPosX = rect.position.x - (rectDeltaX - rect.sizeDelta.x)/2;
-			slider.direction = Slider.Direction.RightToLeft;
+			//slider.direction = Slider.Direction.RightToLeft;
 		}
 		else 
 		{
 			rectPosX = rect.position.x + (rectDeltaX - rect.sizeDelta.x)/2;
-			slider.direction = Slider.Direction.LeftToRight;
+			//slider.direction = Slider.Direction.LeftToRight;
 		}
 
 		rect.sizeDelta = new Vector2(rectDeltaX, rect.sizeDelta.y);
