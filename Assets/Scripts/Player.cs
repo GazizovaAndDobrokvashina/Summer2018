@@ -22,9 +22,7 @@ public abstract class Player : MonoBehaviour
     protected Spell currentFirstDamageSpell;
     protected Spell currentSecondDamageSpell;
 
-    protected abstract void UseFirstDamgeSpell();
-    protected abstract void UseSecondDamgeSpell();
-    protected abstract void UseHealSpell();
+    protected abstract void UseSpell(Spell spell, int numberOfAttackSpell);
     protected abstract void Move();
     protected abstract void Jump();
     protected abstract void Death();

@@ -2,40 +2,68 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : Player {
+public class Enemy : Player
+{
+    private void Start()
+    {
+        //здоровье
+        maxHealth = 100f;
+        health = 100f;
+        //мана
+        mana = 100f;
+        maxMana = 100f;
+        //скорость передвижения
+        speed = 15f;
+        //сила прыжка
+        forceForJump = 6f;
+        //rigidbody игрока
+        _rigidbody = GetComponent<Rigidbody>();
 
-	public void TakeDamage(float damage)
-	{
-		health -= damage;
-	}
-	
-	protected override void UseFirstDamgeSpell()
-	{
-		throw new System.NotImplementedException();
-	}
+        //ТЕСТОВЫЕ ДАННЫЕ
+        spells = new Spell[3];
+        spells[0] = new Spell("HEAL", 1f, 20f, 10f);
+        spells[1] = new Spell("ALLDAMAGE", 4f, 20f, 20f);
+        spells[2] = new Spell("SINGLEDAMAGE", 3f, 15f, 15f);
 
-	protected override void UseSecondDamgeSpell()
-	{
-		throw new System.NotImplementedException();
-	}
+        currentHealSpell = spells[0];
+        currentFirstDamageSpell = spells[1];
+        currentSecondDamageSpell = spells[2];
+    }
 
-	protected override void UseHealSpell()
-	{
-		throw new System.NotImplementedException();
-	}
+    private void FixedUpdate()
+    {
+        if (mana < maxMana)
+            mana += Time.deltaTime;
+        if (mana > maxMana)
+            mana = maxMana;
+    }
 
-	protected override void Move()
-	{
-		throw new System.NotImplementedException();
-	}
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+        if (health <= 0)
+        {
+            Death();
+        }
+    }
 
-	protected override void Jump()
-	{
-		throw new System.NotImplementedException();
-	}
+    protected override void UseSpell(Spell spell, int numberOfAttackSpell)
+    {
+        throw new System.NotImplementedException();
+    }
 
-	protected override void Death()
-	{
-		throw new System.NotImplementedException();
-	}
+    protected override void Move()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    protected override void Jump()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    protected override void Death()
+    {
+        Destroy(gameObject);
+    }
 }

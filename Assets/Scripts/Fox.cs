@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters;
 using UnityEngine;
 
 public class Fox : Player
@@ -9,6 +10,9 @@ public class Fox : Player
 
     //дополнительные жизни
     [SerializeField] private int extraLives;
+    
+    //месторасположение последнего чекпоинта
+    [SerializeField] private Vector3 lastCheckpoint;
 
     private List<Enemy> enemyes;
 
@@ -27,15 +31,15 @@ public class Fox : Player
         //rigidbody игрока
         _rigidbody = GetComponent<Rigidbody>();
         //по молчанию одна дополнительная жизнь
-        extraLives = 1;
+        extraLives = 2;
         //инициализация списка врагов в триггере игрока
         enemyes = new List<Enemy>();
 
         //ТЕСТОВЫЕ ДАННЫЕ
         spells = new Spell[3];
-        spells[0] = new Spell("Heal", 1f, 20f, 10f);
-        spells[1] = new Spell("Fire", 4f, 20f, 20f);
-        spells[2] = new Spell("Lightning", 3f, 15f, 15f);
+        spells[0] = new Spell("HEAL", 1f, 20f, 10f);
+        spells[1] = new Spell("ALLDAMAGE", 4f, 20f, 20f);
+        spells[2] = new Spell("SINGLEDAMAGE", 3f, 15f, 15f);
 
         currentHealSpell = spells[0];
         currentFirstDamageSpell = spells[1];
@@ -83,19 +87,22 @@ public class Fox : Player
         //использование скилла лечения
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            UseHealSpell();
+            //UseHealSpell();
+            UseSpell(currentHealSpell, 0);
         }
 
         //использования скила первой атаки
         if (Input.GetKeyDown(KeyCode.E))
         {
-            UseFirstDamgeSpell();
+            //UseFirstDamgeSpell();
+            UseSpell(currentFirstDamageSpell, 1);
         }
 
         //использование скила второй атаки
         if (Input.GetKeyDown(KeyCode.F))
         {
-            UseSecondDamgeSpell();
+            //UseSecondDamgeSpell();
+            UseSpell(currentSecondDamageSpell, 2);
         }
 
         //прыжок
@@ -117,7 +124,7 @@ public class Fox : Player
         if (other.gameObject.tag == "Enemy")
         {
             enemyes.Add(other.gameObject.GetComponent<Enemy>());
-            Debug.Log("I add! " + enemyes.Count);
+           // Debug.Log("I add! " + enemyes.Count);
         }
     }
 
@@ -126,66 +133,136 @@ public class Fox : Player
         if (other.gameObject.tag == "Enemy")
         {
             enemyes.Remove(other.gameObject.GetComponent<Enemy>());
-            Debug.Log("I remove! " + enemyes.Count);
+           // Debug.Log("I remove! " + enemyes.Count);
         }
     }
 
-    //использование первой атакующей способности
-    protected override void UseFirstDamgeSpell()
+    protected override void UseSpell(Spell spell, int numberOfAttackSpell)
     {
-        if (currentCoolDownFirstDamage <= 0 && enemyes.Count > 0 && mana >= spells[1].ManaValue)
+        //проверяем тип способности
+        switch (spell.Type)
         {
-            mana -= spells[1].ManaValue;
-            currentCoolDownFirstDamage = spells[1].Cooldown;
+            //если это лечение, то применяем на игрока
+            case "HEAL":
+                //если способность перезаряжена, маны достаточно и здоровье не полное, то применяем
+                if (currentCoolDownHeal <= 0 && mana >= spell.ManaValue && health < maxHealth)
+                {
+                    mana -= spell.ManaValue;
+                    currentCoolDownHeal = spell.Cooldown;
+                    health += spell.Value;
+                    if (health > maxHealth)
+                        health = maxHealth;
+                    Debug.Log("Heal");
+                }
+                else
+                {
+                    Debug.Log("Can't use heal");
+                }
+
+                break;
+
+            //Если тип способности "атакующая по всем врагам"
+            case "ALLDAMAGE":
+
+                //если она сохранена на первый спелл игрока или на второй спелл  и достаточно маны, в радиусе поражения есть враги
+                if ((numberOfAttackSpell == 1 && currentCoolDownFirstDamage <= 0 ||
+                     numberOfAttackSpell == 2 && currentCoolDownSecondDamage <= 0) && mana >= spell.ManaValue &&
+                    enemyes.Count > 0)
+                {
+                    //тратим ману
+                    mana -= spell.ManaValue;
+                    //наносим урон всем врагам
+                    foreach (Enemy enemy in enemyes)
+                    {
+                        enemy.TakeDamage(spell.Value);
+                    }
+
+                    //отправляем на перезарядку использованный скилл
+                    if (numberOfAttackSpell == 1)
+                    {
+                        currentCoolDownFirstDamage = spell.Cooldown;
+                        Debug.Log("Used 1 attack");
+                    }
+                    else
+                    {
+                        currentCoolDownSecondDamage = spell.Cooldown;
+                        Debug.Log("Used 2 attack");
+                    }
+                }
+                else
+                {
+                    Debug.Log("Can't use all attack");
+                }
+
+                break;
+
+            //Если тип способности "атакующая по одному врагу"  
+            case "SINGLEDAMAGE":
+
+                //если она сохранена на первый спелл игрока или на второй спелл  и достаточно маны, в радиусе поражения есть враги
+                if ((numberOfAttackSpell == 1 && currentCoolDownFirstDamage <= 0 ||
+                     numberOfAttackSpell == 2 && currentCoolDownSecondDamage <= 0) && mana >= spell.ManaValue &&
+                    enemyes.Count > 0)
+                {
+                    //тратим ману
+                    mana -= spell.ManaValue;
+
+                    //наносим урон врагу
+                    if (enemyes.Count == 1)
+                    {
+                        enemyes[0].TakeDamage(spell.Value);
+                    }
+                    else
+                    {
+                        Enemy nearEnemy = FindNearlierEnemy();
+                        if (nearEnemy != null)
+                        {
+                            nearEnemy.TakeDamage(spell.Value);
+                        }
+                    }
+
+                    //отправляем на перезарядку использованный скилл
+                    if (numberOfAttackSpell == 1)
+                    {
+                        currentCoolDownSecondDamage = spell.Cooldown;
+                        Debug.Log("Used 1 attack");
+                    }
+                    else
+                    {
+                        currentCoolDownSecondDamage = spell.Cooldown;
+                        Debug.Log("Used 2 attack");
+                    }
+                }
+                else
+                {
+                    Debug.Log("Can't use single attack");
+                }
+
+                break;
+        }
+    }
+
+
+    private Enemy FindNearlierEnemy()
+    {
+        float distance;
+        Enemy nearlierEnemy = null;
+        if (enemyes.Count != 0)
+        {
+            distance = Vector3.Distance(transform.position, enemyes[0].gameObject.transform.position);
+            nearlierEnemy = enemyes[0];
+
             foreach (Enemy enemy in enemyes)
             {
-                enemy.TakeDamage(spells[1].Value);
+                if (distance > Vector3.Distance(transform.position, enemy.gameObject.transform.position))
+                {
+                    distance = Vector3.Distance(transform.position, enemy.gameObject.transform.position);
+                    nearlierEnemy = enemy;
+                }
             }
+        }
 
-            Debug.Log("Damage 1");
-        }
-        else
-        {
-            Debug.Log("Cooldown Damage 1");
-        }
-    }
-
-    //использование второй атакующей способности
-    protected override void UseSecondDamgeSpell()
-    {
-        if (currentCoolDownSecondDamage <= 0 && enemyes.Count > 0 && mana >= spells[2].ManaValue)
-        {
-            mana -= spells[2].ManaValue;
-            currentCoolDownSecondDamage = spells[2].Cooldown;
-            foreach (Enemy enemy in enemyes)
-            {
-                enemy.TakeDamage(spells[2].Value);
-            }
-
-            Debug.Log("Damage 2");
-        }
-        else
-        {
-            Debug.Log("Cooldown Damage 2");
-        }
-    }
-
-    //использование хилки
-    protected override void UseHealSpell()
-    {
-        if (currentCoolDownHeal <= 0 && mana >= spells[0].ManaValue)
-        {
-            mana -= spells[0].ManaValue;
-            currentCoolDownHeal = spells[0].Cooldown;
-            health += spells[0].Value;
-            if (health > maxHealth)
-                health = maxHealth;
-            Debug.Log("Heal");
-        }
-        else
-        {
-            Debug.Log("Cooldown heal");
-        }
+        return nearlierEnemy;
     }
 
     protected override void Move()
@@ -203,7 +280,17 @@ public class Fox : Player
     //смерть персонажа
     protected override void Death()
     {
-        //если игрок погиб и имеет дополнительные жизни, то начинает с чекпоинта; а если не имеет доп жизней, то с начала уровня
+        //если игрок погиб и имеет дополнительные жизни, то начинает с чекпоинта; 
+        if (extraLives > 0)
+        {
+            extraLives--;
+            transform.position = lastCheckpoint;
+
+        }
+        else
+        {
+            //предложить игроку начать уровень заново (все объекты возвращаются на свои места) либо вернуться в главное меню
+        }
     }
 
     public float Health
@@ -214,5 +301,15 @@ public class Fox : Player
     public float Mana
     {
         get { return mana; }
+    }
+
+    public int ExtraLives
+    {
+        get { return extraLives; }
+    }
+
+    public void SaveLastCheckPoint(Vector3 position)
+    {
+        lastCheckpoint = position;
     }
 }
