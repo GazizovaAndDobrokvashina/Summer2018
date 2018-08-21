@@ -14,10 +14,10 @@ public abstract class Player : MonoBehaviour
     [SerializeField] protected float currentCoolDownHeal;
     [SerializeField] protected float currentCoolDownFirstDamage;
     [SerializeField] protected float currentCoolDownSecondDamage;
-    
-    
+
+
     protected Rigidbody _rigidbody;
-    protected Spell[] spells;
+    protected List<Spell> spells;
     protected Spell currentHealSpell;
     protected Spell currentFirstDamageSpell;
     protected Spell currentSecondDamageSpell;
@@ -26,6 +26,4 @@ public abstract class Player : MonoBehaviour
     protected abstract void Move();
     protected abstract void Jump();
     protected abstract void Death();
-    
-    
 }

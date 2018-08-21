@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters;
+using System.Security.Principal;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Fox : Player
 {
@@ -10,11 +12,29 @@ public class Fox : Player
 
     //дополнительные жизни
     [SerializeField] private int extraLives;
-    
+
     //месторасположение последнего чекпоинта
     [SerializeField] private Vector3 lastCheckpoint;
 
+    //список враов в триггере игрока
     private List<Enemy> enemyes;
+
+    //таймер полученного бонуса
+    [SerializeField] private float timerBonus;
+
+    //дефолтная скорость
+    [SerializeField] private float defaultSpeed;
+
+    //сколько прыжков может совершить игрок
+    [SerializeField] private int countOfJumMax;
+
+    //колько прыжков сделал игрок
+    [SerializeField] private int countOfJump;
+
+    //событие
+    [SerializeField] private UnityEvent _unityEvent;
+
+    [SerializeField] private bool isPressedJump;
 
     private void Start()
     {
@@ -26,6 +46,7 @@ public class Fox : Player
         maxMana = 100f;
         //скорость передвижения
         speed = 15f;
+        defaultSpeed = speed;
         //сила прыжка
         forceForJump = 6f;
         //rigidbody игрока
@@ -34,24 +55,46 @@ public class Fox : Player
         extraLives = 2;
         //инициализация списка врагов в триггере игрока
         enemyes = new List<Enemy>();
+        //максимальное количество прыжков
+        countOfJumMax = 1;
+        countOfJump = 0;
 
-        //ТЕСТОВЫЕ ДАННЫЕ
-        spells = new Spell[3];
-        spells[0] = new Spell("HEAL", 1f, 20f, 10f);
-        spells[1] = new Spell("ALLDAMAGE", 4f, 20f, 20f);
-        spells[2] = new Spell("SINGLEDAMAGE", 3f, 15f, 15f);
+        //ТЕСТОВЫЕ ДАННЫЕ//
+        spells = new List<Spell>();
+        spells.Add(new Spell(0, "HEAL", 1f, 20f, 10f, "heal"));
+        spells.Add(new Spell(1, "ALLDAMAGE", 4f, 20f, 20f, "FireRain"));
+        spells.Add(new Spell(2, "SINGLEDAMAGE", 3f, 15f, 15f, "FireArrow"));
 
         currentHealSpell = spells[0];
         currentFirstDamageSpell = spells[1];
         currentSecondDamageSpell = spells[2];
+        //
+
+        if (_unityEvent == null)
+            _unityEvent = new UnityEvent();
+
+        isPressedJump = false;
     }
 
     private void FixedUpdate()
     {
+        //если мана не полная, то восстанавливаем её
         if (mana < maxMana)
             mana += Time.deltaTime;
+
+        //если мана вышла за пределы максимального значения, то приравниваем к максимальному
         if (mana > maxMana)
             mana = maxMana;
+
+        //если бонус ещё активен, то уменьшаем время его действия
+        if (timerBonus > 0)
+            timerBonus -= Time.deltaTime;
+
+        //если время действия бонуса вышло, то прекращаем его действие
+        if (timerBonus <= 0)
+        {
+            speed = defaultSpeed;
+        }
 
         //перезаряка способности лечения
         if (currentCoolDownHeal > 0)
@@ -106,8 +149,15 @@ public class Fox : Player
         }
 
         //прыжок
-        if (Input.GetKeyDown(KeyCode.Space) && onGround)
+        if (Input.GetKeyDown(KeyCode.Space) && countOfJumMax > countOfJump && !isPressedJump)
+        {
+            isPressedJump = true;
+            //onGround = false;
             Jump();
+        }
+
+        if (!Input.GetKey(KeyCode.Space))
+            isPressedJump = false;
     }
 
     //если игрок коснулся, то отмечаем, что он на земле
@@ -115,6 +165,7 @@ public class Fox : Player
     {
         if (other.collider.gameObject.tag == "Ground")
         {
+            countOfJump = 0;
             onGround = true;
         }
     }
@@ -124,7 +175,7 @@ public class Fox : Player
         if (other.gameObject.tag == "Enemy")
         {
             enemyes.Add(other.gameObject.GetComponent<Enemy>());
-           // Debug.Log("I add! " + enemyes.Count);
+            // Debug.Log("I add! " + enemyes.Count);
         }
     }
 
@@ -133,7 +184,7 @@ public class Fox : Player
         if (other.gameObject.tag == "Enemy")
         {
             enemyes.Remove(other.gameObject.GetComponent<Enemy>());
-           // Debug.Log("I remove! " + enemyes.Count);
+            // Debug.Log("I remove! " + enemyes.Count);
         }
     }
 
@@ -273,7 +324,8 @@ public class Fox : Player
     //прыжок
     protected override void Jump()
     {
-        onGround = false;
+        //onGround = false;
+        countOfJump++;
         _rigidbody.AddForce(transform.up * forceForJump, ForceMode.Impulse);
     }
 
@@ -285,12 +337,22 @@ public class Fox : Player
         {
             extraLives--;
             transform.position = lastCheckpoint;
-
         }
         else
         {
-            //предложить игроку начать уровень заново (все объекты возвращаются на свои места) либо вернуться в главное меню
+            _unityEvent.Invoke();
         }
+    }
+
+    //сбросить параметры лисы к начальным
+    public void RestartFox()
+    {
+        health = maxHealth;
+        mana = maxMana;
+        extraLives = 2;
+        currentCoolDownHeal = 0;
+        currentCoolDownFirstDamage = 0;
+        currentCoolDownSecondDamage = 0;
     }
 
     public float Health
@@ -308,8 +370,74 @@ public class Fox : Player
         get { return extraLives; }
     }
 
+    //сохранить месторасположение последнего чекпоинта
     public void SaveLastCheckPoint(Vector3 position)
     {
         lastCheckpoint = position;
+    }
+
+    //добавить дополнительную жизнь
+    public void AddExtraLive()
+    {
+        extraLives++;
+    }
+
+    //добавляем персонажу скорости, убираем двойной прыжок
+    public void AddBonusSpeed(float value, float timer)
+    {
+        speed += value;
+        if (timerBonus > 0)
+        {
+            countOfJumMax = 1;
+        }
+
+        timerBonus = timer;
+    }
+
+    //добавляем возможность двойного прыжка, убираем доп скорость
+    public void AddBonusJump(float value, float timer)
+    {
+        countOfJumMax = (int) value;
+        if (timerBonus > 0)
+        {
+            speed = defaultSpeed;
+        }
+
+        timerBonus = timer;
+    }
+
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+        if (health <= 0)
+        {
+            Death();
+        }
+    }
+
+    public List<Spell> Spells
+    {
+        get { return spells; }
+    }
+
+    public void SetDamageSpell(int number, int id)
+    {
+        foreach (Spell spell in spells)
+        {
+            if (spell.Id == id)
+            {
+                if (number == 1)
+                {
+                    currentFirstDamageSpell = spell;
+                }
+                else
+                {
+                    currentSecondDamageSpell = spell;
+                }
+
+                //Debug.Log(currentFirstDamageSpell.NameOfSpell);
+                break;
+            }
+        }
     }
 }

@@ -20,14 +20,14 @@ public class Enemy : Player
         _rigidbody = GetComponent<Rigidbody>();
 
         //ТЕСТОВЫЕ ДАННЫЕ
-        spells = new Spell[3];
-        spells[0] = new Spell("HEAL", 1f, 20f, 10f);
-        spells[1] = new Spell("ALLDAMAGE", 4f, 20f, 20f);
-        spells[2] = new Spell("SINGLEDAMAGE", 3f, 15f, 15f);
+        spells = new List<Spell>();
+//        spells[0] = new Spell("HEAL", 1f, 20f, 10f);
+//        spells[1] = new Spell("ALLDAMAGE", 4f, 20f, 20f);
+//        spells[2] = new Spell("SINGLEDAMAGE", 3f, 15f, 15f);
 
-        currentHealSpell = spells[0];
-        currentFirstDamageSpell = spells[1];
-        currentSecondDamageSpell = spells[2];
+//        currentHealSpell = spells[0];
+//        currentFirstDamageSpell = spells[1];
+//        currentSecondDamageSpell = spells[2];
     }
 
     private void FixedUpdate()
@@ -64,6 +64,15 @@ public class Enemy : Player
 
     protected override void Death()
     {
-        Destroy(gameObject);
+        gameObject.SetActive(false);
+        Level.CountNewEnemy();
+    }
+
+    public void RestartEnemy()
+    {
+        health = maxHealth;
+        mana = maxMana;
+        
+        //дописать рестарт кулдаунов способностей, когда пропишем способности для ботов
     }
 }

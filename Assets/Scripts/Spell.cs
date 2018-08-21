@@ -3,19 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Spell 
+public class Spell
 {
-	private String type;
+	private int ID;
+	private string type;
 	private float cooldown;
 	private float value;
 	private float manaValue;
-
-	public Spell(string type, float cooldown, float value, float manaValue)
+	private string nameOfSpell;
+	
+	public Spell(int id, string type, float cooldown, float value, float manaValue, string nameOfSpell)
 	{
+		this.ID = id;
 		this.type = type;
 		this.cooldown = cooldown;
 		this.value = value;
 		this.manaValue = manaValue;
+		this.nameOfSpell = nameOfSpell;
 	}
 
 	public float ManaValue
@@ -36,5 +40,15 @@ public class Spell
 	public float Value
 	{
 		get { return value; }
+	}
+
+	public string NameOfSpell
+	{
+		get { return nameOfSpell; }
+	}
+
+	public int Id
+	{
+		get { return ID; }
 	}
 }

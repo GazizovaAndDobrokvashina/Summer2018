@@ -17,6 +17,7 @@
           <e p="Bonus.cs" t="Include" />
           <e p="Bonuses.cs" t="Include" />
           <e p="Checkpoint.cs" t="Include" />
+          <e p="DeathMenu.cs" t="Include" />
           <e p="Enemy.cs" t="Include" />
           <e p="EscapeMenu.cs" t="Include" />
           <e p="Fox.cs" t="Include" />

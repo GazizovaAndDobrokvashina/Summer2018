@@ -14,9 +14,9 @@ public class EscapeMenu : MonoBehaviour
 	// Update is called once per frame
 	void FixedUpdate () {
 		
-		if (Input.GetKeyDown(KeyCode.Escape) && !deathMenu.active)
+		if (Input.GetKeyDown(KeyCode.Escape) && !deathMenu.activeInHierarchy)
 		{
-			if (!pauseMenu.active)
+			if (!pauseMenu.activeInHierarchy)
 			{
 				Time.timeScale = 0;
 				pauseMenu.SetActive(true);
