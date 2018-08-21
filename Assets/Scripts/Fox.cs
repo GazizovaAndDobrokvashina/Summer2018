@@ -62,7 +62,7 @@ public class Fox : Player
         //ТЕСТОВЫЕ ДАННЫЕ//
         spells = new List<Spell>();
         spells.Add(new Spell(0, "HEAL", 1f, 20f, 10f, "heal"));
-        spells.Add(new Spell(1, "ALLDAMAGE", 4f, 20f, 20f, "FireRain"));
+        spells.Add(new Spell(1, "ALLDAMAGE", 4f, 20f, 20f, "RainOfFire"));
         spells.Add(new Spell(2, "SINGLEDAMAGE", 3f, 15f, 15f, "FireArrow"));
 
         currentHealSpell = spells[0];

@@ -36,7 +36,7 @@ public class GameCanvas : MonoBehaviour
     [SerializeField] private GameObject[] buttons;
 
     //массив картинок спелов
-    [SerializeField] private Image images;
+    [SerializeField] private Sprite[] images;
 
     private void Start()
     {
@@ -88,6 +88,19 @@ public class GameCanvas : MonoBehaviour
                     //добавляем листенер на клик
                     buttons[index].GetComponent<Button>().onClick
                         .AddListener(() => ChangeChoosenSpell(spell.Id, spell.NameOfSpell));
+
+                    Sprite sprite = null;
+                    foreach (Sprite image in images)
+                    {
+                        if (image.name == spell.NameOfSpell)
+                        {
+                            sprite = image;
+                            break;
+                        }
+                    }
+
+                    buttons[index].GetComponent<Image>().sprite = sprite;
+
                     //включаем кнопку
                     buttons[index].SetActive(true);
                     //увеличиваем счетчик кнопки
@@ -112,6 +125,6 @@ public class GameCanvas : MonoBehaviour
         spellsGameObject.SetActive(false);
         // Debug.Log("Saved");
     }
-    
-    //private Image
+
+    //private Sprite
 }
