@@ -5,50 +5,73 @@ using UnityEngine;
 
 public class Spell
 {
-	private int ID;
-	private string type;
-	private float cooldown;
-	private float value;
-	private float manaValue;
-	private string nameOfSpell;
-	
-	public Spell(int id, string type, float cooldown, float value, float manaValue, string nameOfSpell)
-	{
-		this.ID = id;
-		this.type = type;
-		this.cooldown = cooldown;
-		this.value = value;
-		this.manaValue = manaValue;
-		this.nameOfSpell = nameOfSpell;
-	}
+    private int ID;
+    private string type;
+    private float cooldown;
+    private float value;
+    private float manaValue;
+    private string nameOfSpell;
+    private Sprite smallSprite;
+    private Sprite largeSpell;
+    private string nameForGame;
 
-	public float ManaValue
-	{
-		get { return manaValue; }
-	}
+    public Spell(int id, string type, float cooldown, float value, float manaValue, string nameOfSpell, string nameForGame)
+    {
+        this.ID = id;
+        this.type = type;
+        this.cooldown = cooldown;
+        this.value = value;
+        this.manaValue = manaValue;
+        this.nameOfSpell = nameOfSpell;
+        this.nameForGame = nameForGame;
+        
+    }
+    
 
-	public string Type
-	{
-		get { return type; }
-	}
+    public float ManaValue
+    {
+        get { return manaValue; }
+    }
 
-	public float Cooldown
-	{
-		get { return cooldown; }
-	}
+    public string Type
+    {
+        get { return type; }
+    }
 
-	public float Value
-	{
-		get { return value; }
-	}
+    public float Cooldown
+    {
+        get { return cooldown; }
+    }
 
-	public string NameOfSpell
-	{
-		get { return nameOfSpell; }
-	}
+    public float Value
+    {
+        get { return value; }
+    }
 
-	public int Id
-	{
-		get { return ID; }
-	}
+    public string NameOfSpell
+    {
+        get { return nameOfSpell; }
+    }
+
+    public int Id
+    {
+        get { return ID; }
+    }
+
+    public Sprite SmallSprite
+    {
+        get { return smallSprite; }
+        set { smallSprite = value; }
+    }
+
+    public Sprite LargeSpell
+    {
+        get { return largeSpell; }
+        set { largeSpell = value; }
+    }
+
+    public string NameForGame
+    {
+        get { return nameForGame; }
+    }
 }

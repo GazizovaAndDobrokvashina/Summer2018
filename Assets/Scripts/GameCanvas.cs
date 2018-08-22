@@ -17,11 +17,8 @@ public class GameCanvas : MonoBehaviour
     //текстовое поле кнопки добавления способности
     public Text addSpell2;
 
-    //картинка первой способности
-    public Image firstDamage;
-
-    //картинка второй способности
-    public Image secondDamage;
+    //картинка хилки
+    public Image HealImage;
 
     //объект с кнопками добавления способностей
     public GameObject addSpells;
@@ -38,6 +35,12 @@ public class GameCanvas : MonoBehaviour
     //массив картинок спелов
     [SerializeField] private Sprite[] images;
 
+    //картинка первой способности
+    public Image firstSkill;
+
+    //картинка второй способности
+    public Image secondSkill;
+    
     private void Start()
     {
         //находим игрока на сцене
@@ -63,6 +66,20 @@ public class GameCanvas : MonoBehaviour
         {
             MenuSpells();
         }
+
+        if(fox.CurrentCoolDownHeal > 0)
+        HealImage.fillAmount =
+            (fox.CurrentHealSpell.Cooldown - fox.CurrentCoolDownHeal) / fox.CurrentHealSpell.Cooldown;
+        
+        
+        if(fox.CurrentCoolDownFirstDamage > 0)
+            firstSkill.fillAmount =
+                (fox.CurrentFirstDamageSpell.Cooldown - fox.CurrentCoolDownFirstDamage) / fox.CurrentFirstDamageSpell.Cooldown;
+        
+        
+        if(fox.CurrentCoolDownSecondDamage > 0)
+            secondSkill.fillAmount =
+                (fox.CurrentSecondDamageSpell.Cooldown - fox.CurrentCoolDownSecondDamage) / fox.CurrentSecondDamageSpell.Cooldown;
     }
 
     //открыть/закрыть окно способностей
@@ -84,22 +101,12 @@ public class GameCanvas : MonoBehaviour
                 if (spell.Type != "HEAL")
                 {
                     //выводим название спелла
-                    buttons[index].GetComponentInChildren<Text>().text = spell.NameOfSpell;
+                    buttons[index].GetComponentInChildren<Text>().text = spell.NameForGame;
                     //добавляем листенер на клик
                     buttons[index].GetComponent<Button>().onClick
-                        .AddListener(() => ChangeChoosenSpell(spell.Id, spell.NameOfSpell));
+                        .AddListener(() => ChangeChoosenSpell(spell.Id, spell.NameForGame));
 
-                    Sprite sprite = null;
-                    foreach (Sprite image in images)
-                    {
-                        if (image.name == spell.NameOfSpell)
-                        {
-                            sprite = image;
-                            break;
-                        }
-                    }
-
-                    buttons[index].GetComponent<Image>().sprite = sprite;
+                    buttons[index].GetComponent<Image>().sprite = spell.LargeSpell;
 
                     //включаем кнопку
                     buttons[index].SetActive(true);
@@ -120,11 +127,23 @@ public class GameCanvas : MonoBehaviour
     {
         //value - это первая или вторая атакующая способность, whichSpellChoosen передается фоксу и заменяет активный на новый 
         fox.SetDamageSpell(value, whichSpellChoosen);
+        ChangeSpriteOnToolBars(value, AllSpells.GetSpellById(whichSpellChoosen).LargeSpell);
         //выключаем менюшки спеллов
         addSpells.SetActive(false);
         spellsGameObject.SetActive(false);
         // Debug.Log("Saved");
     }
 
-    //private Sprite
+    //изменить спрайт в тулбаре, если изменили способность
+    private void ChangeSpriteOnToolBars(int number, Sprite sprite)
+    {
+        if (number == 1)
+        {
+            firstSkill.sprite = sprite;
+        }
+        else
+        {
+            secondSkill.sprite = sprite;
+        }
+    }
 }

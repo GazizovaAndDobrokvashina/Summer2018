@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D;
 
 public class Level : MonoBehaviour
 {
@@ -23,6 +24,8 @@ public class Level : MonoBehaviour
 
     //какой чекпоинт был посещен последним
     private static int indexOfLastCheckPoint;
+
+    public SpriteAtlas atlas;
     
     //ссылка на игрока
     private Fox fox;
@@ -30,6 +33,8 @@ public class Level : MonoBehaviour
     //подготовка данных при старте уровня
     private void Start()
     {
+        AllSpells.GenerateSpells(atlas);
+        
         //находим игрока на уровне
         fox = GameObject.FindGameObjectWithTag("Player").GetComponent<Fox>();
         
@@ -90,7 +95,7 @@ public class Level : MonoBehaviour
     public void RestartLevel()
     {
         //Сбрасываем параметры лисы
-        fox.RestartFox();
+        fox.RestartFox(checkpoints[0].transform.position);
         
         //включаем всех врагов на уровне, сбрасываем их параметры к дефолтным
         foreach (GameObject o in enemyes)

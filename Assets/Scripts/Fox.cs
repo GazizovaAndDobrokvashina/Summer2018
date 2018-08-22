@@ -36,8 +36,16 @@ public class Fox : Player
 
     [SerializeField] private bool isPressedJump;
 
+    public Animator anim;
+
+    private Transform model;
+    private Transform camera;
+
     private void Start()
     {
+        model = transform.GetChild(0);
+        camera = transform.GetChild(1);
+        
         //здоровье
         maxHealth = 100f;
         health = 100f;
@@ -45,7 +53,7 @@ public class Fox : Player
         mana = 100f;
         maxMana = 100f;
         //скорость передвижения
-        speed = 15f;
+        speed = 4f;
         defaultSpeed = speed;
         //сила прыжка
         forceForJump = 6f;
@@ -59,16 +67,12 @@ public class Fox : Player
         countOfJumMax = 1;
         countOfJump = 0;
 
-        //ТЕСТОВЫЕ ДАННЫЕ//
-        spells = new List<Spell>();
-        spells.Add(new Spell(0, "HEAL", 1f, 20f, 10f, "heal"));
-        spells.Add(new Spell(1, "ALLDAMAGE", 4f, 20f, 20f, "RainOfFire"));
-        spells.Add(new Spell(2, "SINGLEDAMAGE", 3f, 15f, 15f, "FireArrow"));
+        spells = AllSpells.StarterSpellsForFox();
 
         currentHealSpell = spells[0];
         currentFirstDamageSpell = spells[1];
         currentSecondDamageSpell = spells[2];
-        //
+
 
         if (_unityEvent == null)
             _unityEvent = new UnityEvent();
@@ -98,34 +102,61 @@ public class Fox : Player
 
         //перезаряка способности лечения
         if (currentCoolDownHeal > 0)
+        {
             currentCoolDownHeal -= Time.deltaTime;
+        }
 
         //перезарядка первой атакующей способности
         if (currentCoolDownFirstDamage > 0)
+        {
             currentCoolDownFirstDamage -= Time.deltaTime;
+        }
 
         //перезарядка первой атакующей способности
         if (currentCoolDownSecondDamage > 0)
+        {
             currentCoolDownSecondDamage -= Time.deltaTime;
+        }
 
         //движение вперед
         if (Input.GetKey(KeyCode.W))
-
+        {
             transform.position += transform.forward * speed * Time.deltaTime;
+            anim.SetFloat("speed", 1f);
+        }
 
+
+        if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
+        {
+            anim.SetFloat("speed", 0f);
+        }
+        
         //движение назад (скорость снижена вдвое)
         if (Input.GetKey(KeyCode.S))
+        {
             transform.position -= transform.forward * speed / 2 * Time.deltaTime;
+            anim.SetFloat("speed", 1f);
+        }
+
 
         //движение влево
         if (Input.GetKey(KeyCode.A))
+        {
+           // transform.position -= transform.right * speed * Time.deltaTime;
+            anim.SetFloat("speed", 1f);
+            transform.Rotate(Vector3.down);
+        }
 
-            transform.position -= transform.right * speed * Time.deltaTime;
 
         //движение вправо
         if (Input.GetKey(KeyCode.D))
+        {
+            anim.SetFloat("speed", 1f);
+            //transform.position += transform.right * speed * Time.deltaTime;
+            transform.Rotate(-Vector3.down);
+            
+        }
 
-            transform.position += transform.right * speed * Time.deltaTime;
 
         //использование скилла лечения
         if (Input.GetKeyDown(KeyCode.Q))
@@ -165,6 +196,7 @@ public class Fox : Player
     {
         if (other.collider.gameObject.tag == "Ground")
         {
+            anim.SetBool("isJump", false);
             countOfJump = 0;
             onGround = true;
         }
@@ -325,6 +357,7 @@ public class Fox : Player
     protected override void Jump()
     {
         //onGround = false;
+        anim.SetBool("isJump", true);
         countOfJump++;
         _rigidbody.AddForce(transform.up * forceForJump, ForceMode.Impulse);
     }
@@ -345,7 +378,7 @@ public class Fox : Player
     }
 
     //сбросить параметры лисы к начальным
-    public void RestartFox()
+    public void RestartFox(Vector3 statrLevel)
     {
         health = maxHealth;
         mana = maxMana;
@@ -353,6 +386,7 @@ public class Fox : Player
         currentCoolDownHeal = 0;
         currentCoolDownFirstDamage = 0;
         currentCoolDownSecondDamage = 0;
+        transform.position = statrLevel;
     }
 
     public float Health
@@ -439,5 +473,35 @@ public class Fox : Player
                 break;
             }
         }
+    }
+
+    public float CurrentCoolDownHeal
+    {
+        get { return currentCoolDownHeal; }
+    }
+
+    public float CurrentCoolDownFirstDamage
+    {
+        get { return currentCoolDownFirstDamage; }
+    }
+
+    public float CurrentCoolDownSecondDamage
+    {
+        get { return currentCoolDownSecondDamage; }
+    }
+
+    public Spell CurrentHealSpell
+    {
+        get { return currentHealSpell; }
+    }
+
+    public Spell CurrentFirstDamageSpell
+    {
+        get { return currentFirstDamageSpell; }
+    }
+
+    public Spell CurrentSecondDamageSpell
+    {
+        get { return currentSecondDamageSpell; }
     }
 }

@@ -14,6 +14,7 @@
           </e>
         </e>
         <e p="Scripts" t="Include">
+          <e p="AllSpells.cs" t="Include" />
           <e p="Bonus.cs" t="Include" />
           <e p="Bonuses.cs" t="Include" />
           <e p="Checkpoint.cs" t="Include" />
@@ -30,7 +31,6 @@
           <e p="PauseMenu.cs" t="Include" />
           <e p="Player.cs" t="Include" />
           <e p="Spell.cs" t="Include" />
-          <e p="Spells.cs" t="Include" />
         </e>
       </e>
       <e p="Library" t="ExcludeRecursive" />
