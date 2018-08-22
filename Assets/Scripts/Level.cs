@@ -35,8 +35,10 @@ public class Level : MonoBehaviour
     {
         AllSpells.GenerateSpells(atlas);
         
+        
         //находим игрока на уровне
         fox = GameObject.FindGameObjectWithTag("Player").GetComponent<Fox>();
+        fox.StartSpells();
         
         //сбрасываем параметры уровня к стандартным
         ResetIndexOfLastCheckPointAndCounts();

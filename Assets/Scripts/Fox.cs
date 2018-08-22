@@ -40,7 +40,7 @@ public class Fox : Player
 
     private Transform model;
     private Transform camera;
-
+    public GameObject partHeal;
     private void Start()
     {
         model = transform.GetChild(0);
@@ -67,17 +67,25 @@ public class Fox : Player
         countOfJumMax = 1;
         countOfJump = 0;
 
-        spells = AllSpells.StarterSpellsForFox();
-
-        currentHealSpell = spells[0];
-        currentFirstDamageSpell = spells[1];
-        currentSecondDamageSpell = spells[2];
 
 
         if (_unityEvent == null)
             _unityEvent = new UnityEvent();
 
         isPressedJump = false;
+        
+        
+    }
+
+    public void StartSpells()
+    {
+        
+        spells = AllSpells.StarterSpellsForFox();
+
+        currentHealSpell = spells[0];
+        currentFirstDamageSpell = spells[1];
+        currentSecondDamageSpell = spells[2];
+        currentSecondDamageSpell = spells[2];
     }
 
     private void FixedUpdate()
@@ -191,6 +199,12 @@ public class Fox : Player
             isPressedJump = false;
     }
 
+    private IEnumerator WaitHealAnimation()
+    {
+        yield return new WaitUntil(()=> !partHeal.GetComponent<Animation>().isPlaying);
+        partHeal.SetActive(false);
+    }
+
     //если игрок коснулся, то отмечаем, что он на земле
     private void OnCollisionEnter(Collision other)
     {
@@ -230,6 +244,8 @@ public class Fox : Player
                 //если способность перезаряжена, маны достаточно и здоровье не полное, то применяем
                 if (currentCoolDownHeal <= 0 && mana >= spell.ManaValue && health < maxHealth)
                 {
+                    partHeal.SetActive(true);
+                    StartCoroutine(WaitHealAnimation());
                     mana -= spell.ManaValue;
                     currentCoolDownHeal = spell.Cooldown;
                     health += spell.Value;
