@@ -19,6 +19,7 @@
           <e p="Bonuses.cs" t="Include" />
           <e p="Checkpoint.cs" t="Include" />
           <e p="DeathMenu.cs" t="Include" />
+          <e p="EndOfLevelCanvas.cs" t="Include" />
           <e p="Enemy.cs" t="Include" />
           <e p="EscapeMenu.cs" t="Include" />
           <e p="Fox.cs" t="Include" />
@@ -31,6 +32,7 @@
           <e p="PauseMenu.cs" t="Include" />
           <e p="Player.cs" t="Include" />
           <e p="Spell.cs" t="Include" />
+          <e p="TimeLevel.cs" t="Include" />
         </e>
       </e>
       <e p="Library" t="ExcludeRecursive" />

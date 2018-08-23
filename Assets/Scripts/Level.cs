@@ -88,10 +88,12 @@ public class Level : MonoBehaviour
         countOfBonuses++;
     }
     
-    //отобразить информацию об уровне
-    void ShowInformation()
+    //добавить мерть игрока в счетчик
+    public static void CountNewDeath()
     {
+        countOfDeaths++;
     }
+       
 
     //начать уровнеь заново
     public void RestartLevel()
@@ -122,6 +124,23 @@ public class Level : MonoBehaviour
         indexOfLastCheckPoint = -1;
         countOfEnemies = 0;
         countOfDeaths = 0;
-        countOfDeaths = 0;
+        countOfBonuses = 0;
     }
+
+    public static int CountOfEnemies
+    {
+        get { return countOfEnemies; }
+    }
+
+    public static int CountOfDeaths
+    {
+        get { return countOfDeaths; }
+    }
+
+    public static int CountOfBonuses
+    {
+        get { return countOfBonuses; }
+    }
+
+   
 }

@@ -28,32 +28,48 @@ SpriteAtlas:
       enableTightPacking: 1
     packedHash:
       serializedVersion: 2
-      Hash: 3c34987aa34ba86530f331c4fe0368be
+      Hash: 0e8d503b6b13921c7945291ebf487536
     variantMultiplier: 1
     bindAsDefault: 1
     finalFormat: 4
-    hashString: 3c34987aa34ba86530f331c4fe0368be
-    totalSpriteSurfaceArea: 728520
+    hashString: 0e8d503b6b13921c7945291ebf487536
+    totalSpriteSurfaceArea: 802488
     packables:
     - {fileID: 2800000, guid: aab64e5657994e041b69ceee50baa283, type: 3}
     - {fileID: 2800000, guid: 0241a3827d8e2434b8a9dcf859e53b98, type: 3}
     - {fileID: 2800000, guid: c25e3f1a069beeb4cb5567396d5e46e4, type: 3}
     - {fileID: 2800000, guid: 25178971d9d66184abac4672b6000680, type: 3}
+    - {fileID: 2800000, guid: 881d09dd4689a484bab163c95fb61ce2, type: 3}
+    - {fileID: 2800000, guid: 406089a225e1433459ec673ccac7b03f, type: 3}
+    - {fileID: 2800000, guid: 194057fc852d2384694d31d1ecdd8516, type: 3}
+    - {fileID: 2800000, guid: 80b0d1c7c024d1d44bff218e6bafe89b, type: 3}
     packedSpriteRenderDataKeys:
     - aab64e5657994e041b69ceee50baa283: 21300000
     - 0241a3827d8e2434b8a9dcf859e53b98: 21300000
     - c25e3f1a069beeb4cb5567396d5e46e4: 21300000
     - 25178971d9d66184abac4672b6000680: 21300000
+    - 881d09dd4689a484bab163c95fb61ce2: 21300000
+    - 406089a225e1433459ec673ccac7b03f: 21300000
+    - 80b0d1c7c024d1d44bff218e6bafe89b: 21300000
+    - 194057fc852d2384694d31d1ecdd8516: 21300000
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: aab64e5657994e041b69ceee50baa283, type: 3}
   - {fileID: 21300000, guid: 0241a3827d8e2434b8a9dcf859e53b98, type: 3}
   - {fileID: 21300000, guid: c25e3f1a069beeb4cb5567396d5e46e4, type: 3}
   - {fileID: 21300000, guid: 25178971d9d66184abac4672b6000680, type: 3}
+  - {fileID: 21300000, guid: 881d09dd4689a484bab163c95fb61ce2, type: 3}
+  - {fileID: 21300000, guid: 406089a225e1433459ec673ccac7b03f, type: 3}
+  - {fileID: 21300000, guid: 80b0d1c7c024d1d44bff218e6bafe89b, type: 3}
+  - {fileID: 21300000, guid: 194057fc852d2384694d31d1ecdd8516, type: 3}
   m_PackedSpriteNamesToIndex:
   - FireArrow
   - IceSpike
   - Lightning
   - RainOfFire
+  - FireArrow_small
+  - IceSpike_small
+  - RainOfFire_small
+  - Lightning_small
   m_Tag: New Sprite Atlas
   m_IsVariant: 0

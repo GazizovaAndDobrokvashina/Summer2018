@@ -75,4 +75,9 @@ public class Enemy : Player
         
         //дописать рестарт кулдаунов способностей, когда пропишем способности для ботов
     }
+
+    public float Health
+    {
+        get { return health; }
+    }
 }

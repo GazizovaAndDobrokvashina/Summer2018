@@ -43,8 +43,9 @@ public static class AllSpells
 	{
 		foreach (Spell spell in spells)
 		{
+			
 			spell.LargeSpell = atlas.GetSprite(spell.NameOfSpell);
-			//spell.SmallSprite = atlas.GetSprite(spell.NameOfSpell + "_small");
+			spell.SmallSprite = atlas.GetSprite(spell.NameOfSpell + "_small");
 		}
 	}
 

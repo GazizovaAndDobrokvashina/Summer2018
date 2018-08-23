@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters;
 using System.Security.Principal;
+using NUnit.Framework.Internal.Execution;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class Fox : Player
 {
-    //находится ли игрок на земле
-    [SerializeField] private bool onGround = true;
-
     //дополнительные жизни
     [SerializeField] private int extraLives;
 
@@ -34,17 +32,24 @@ public class Fox : Player
     //событие
     [SerializeField] private UnityEvent _unityEvent;
 
+    //нажата ли клавиша прыжка
     [SerializeField] private bool isPressedJump;
 
+    [SerializeField] private bool isPressedFirstDamage;
+
+    [SerializeField] private bool isPressedSecondDamage;
+
+    [SerializeField] private bool isPressedHeal;
+
+
+    //аниматор игрока
     public Animator anim;
 
-    private Transform model;
-    private Transform camera;
+    //модель игрока
     public GameObject partHeal;
+
     private void Start()
     {
-        model = transform.GetChild(0);
-        camera = transform.GetChild(1);
         
         //здоровье
         maxHealth = 100f;
@@ -68,18 +73,16 @@ public class Fox : Player
         countOfJump = 0;
 
 
-
         if (_unityEvent == null)
             _unityEvent = new UnityEvent();
 
         isPressedJump = false;
-        
-        
     }
 
+    
+    
     public void StartSpells()
     {
-        
         spells = AllSpells.StarterSpellsForFox();
 
         currentHealSpell = spells[0];
@@ -106,6 +109,7 @@ public class Fox : Player
         if (timerBonus <= 0)
         {
             speed = defaultSpeed;
+            countOfJumMax = 1;
         }
 
         //перезаряка способности лечения
@@ -133,57 +137,62 @@ public class Fox : Player
             anim.SetFloat("speed", 1f);
         }
 
-
-        if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
+        //стоим на месте
+        if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.A) &&
+            !Input.GetKey(KeyCode.D))
         {
             anim.SetFloat("speed", 0f);
         }
-        
+
         //движение назад (скорость снижена вдвое)
         if (Input.GetKey(KeyCode.S))
         {
-            transform.position -= transform.forward * speed / 2 * Time.deltaTime;
-            anim.SetFloat("speed", 1f);
+            transform.position -= transform.forward * speed / 4 * Time.deltaTime;
+            anim.SetFloat("speed", -1f);
         }
 
 
         //движение влево
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.S))
         {
-           // transform.position -= transform.right * speed * Time.deltaTime;
-            anim.SetFloat("speed", 1f);
             transform.Rotate(Vector3.down);
         }
 
 
         //движение вправо
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.S))
         {
-            anim.SetFloat("speed", 1f);
-            //transform.position += transform.right * speed * Time.deltaTime;
             transform.Rotate(-Vector3.down);
-            
         }
 
+        //eсли поворот на месте
+        if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S) &&
+            (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.A)))
+        {
+            anim.SetFloat("speed", -0.3f);
+        }
 
         //использование скилла лечения
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q) && !isPressedHeal)
         {
-            //UseHealSpell();
+            Debug.Log("Heal");
+            isPressedHeal = true;
             UseSpell(currentHealSpell, 0);
         }
 
         //использования скила первой атаки
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) && !isPressedFirstDamage)
         {
-            //UseFirstDamgeSpell();
+           // Debug.Log("first");
+            isPressedFirstDamage = true;
             UseSpell(currentFirstDamageSpell, 1);
         }
 
         //использование скила второй атаки
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.F) && !isPressedSecondDamage)
         {
-            //UseSecondDamgeSpell();
+           // Debug.Log("second");
+            isPressedSecondDamage = true;
             UseSpell(currentSecondDamageSpell, 2);
         }
 
@@ -191,17 +200,25 @@ public class Fox : Player
         if (Input.GetKeyDown(KeyCode.Space) && countOfJumMax > countOfJump && !isPressedJump)
         {
             isPressedJump = true;
-            //onGround = false;
             Jump();
         }
 
         if (!Input.GetKey(KeyCode.Space))
             isPressedJump = false;
+
+        if (!Input.GetKey(KeyCode.Q))
+            isPressedHeal = false;
+
+        if (!Input.GetKey(KeyCode.E))
+            isPressedFirstDamage = false;
+
+        if (!Input.GetKey(KeyCode.F))
+            isPressedSecondDamage = false;
     }
 
     private IEnumerator WaitHealAnimation()
     {
-        yield return new WaitUntil(()=> !partHeal.GetComponent<Animation>().isPlaying);
+        yield return new WaitUntil(() => !partHeal.GetComponent<Animation>().isPlaying);
         partHeal.SetActive(false);
     }
 
@@ -212,25 +229,24 @@ public class Fox : Player
         {
             anim.SetBool("isJump", false);
             countOfJump = 0;
-            onGround = true;
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Enemy")
+        if (other.gameObject.tag == "Enemy" && !other.isTrigger)
         {
             enemyes.Add(other.gameObject.GetComponent<Enemy>());
-            // Debug.Log("I add! " + enemyes.Count);
+            //Debug.Log("I add! " + enemyes.Count);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.tag == "Enemy")
+        if (other.gameObject.tag == "Enemy" && !other.isTrigger)
         {
             enemyes.Remove(other.gameObject.GetComponent<Enemy>());
-            // Debug.Log("I remove! " + enemyes.Count);
+            //Debug.Log("I remove! " + enemyes.Count);
         }
     }
 
@@ -251,11 +267,11 @@ public class Fox : Player
                     health += spell.Value;
                     if (health > maxHealth)
                         health = maxHealth;
-                    Debug.Log("Heal");
+                    // Debug.Log("Heal");
                 }
                 else
                 {
-                    Debug.Log("Can't use heal");
+                    //  Debug.Log("Can't use heal");
                 }
 
                 break;
@@ -271,26 +287,45 @@ public class Fox : Player
                     //тратим ману
                     mana -= spell.ManaValue;
                     //наносим урон всем врагам
+                    //Debug.Log("count - " + enemyes.Count);
+
+                    //список погибших врагов
+                    List<Enemy> diedEnemy = new List<Enemy>();
+
+                    //для всех врагов в триггере игрока
                     foreach (Enemy enemy in enemyes)
                     {
+                        //Debug.Log("alldamage");
+                        //наносим урон
                         enemy.TakeDamage(spell.Value);
+                        //если враг погиб, то запоминаем его, чтобы потом удалить из списка
+                        if (enemy.Health <= 0)
+                            diedEnemy.Add(enemy);
                     }
+
+                    //если список погибших врагов не пуст, то удаляем из списка врагов в триггере игрока всех погибших
+                    if (diedEnemy.Count != 0)
+                        foreach (Enemy enemy in diedEnemy)
+                        {
+                            enemyes.Remove(enemy);
+                        }
+
 
                     //отправляем на перезарядку использованный скилл
                     if (numberOfAttackSpell == 1)
                     {
                         currentCoolDownFirstDamage = spell.Cooldown;
-                        Debug.Log("Used 1 attack");
+                        //  Debug.Log("Used 1 attack");
                     }
                     else
                     {
                         currentCoolDownSecondDamage = spell.Cooldown;
-                        Debug.Log("Used 2 attack");
+                        //Debug.Log("Used 2 attack");
                     }
                 }
                 else
                 {
-                    Debug.Log("Can't use all attack");
+                    // Debug.Log("Can't use all attack");
                 }
 
                 break;
@@ -310,13 +345,18 @@ public class Fox : Player
                     if (enemyes.Count == 1)
                     {
                         enemyes[0].TakeDamage(spell.Value);
+                        if (enemyes[0].Health <= 0)
+                            enemyes.Remove(enemyes[0]);
                     }
                     else
                     {
                         Enemy nearEnemy = FindNearlierEnemy();
                         if (nearEnemy != null)
                         {
+                            Debug.Log("Damage");
                             nearEnemy.TakeDamage(spell.Value);
+                            if (nearEnemy.Health <= 0)
+                                enemyes.Remove(nearEnemy);
                         }
                     }
 
@@ -324,17 +364,17 @@ public class Fox : Player
                     if (numberOfAttackSpell == 1)
                     {
                         currentCoolDownSecondDamage = spell.Cooldown;
-                        Debug.Log("Used 1 attack");
+                        //Debug.Log("Used 1 attack");
                     }
                     else
                     {
                         currentCoolDownSecondDamage = spell.Cooldown;
-                        Debug.Log("Used 2 attack");
+                        //Debug.Log("Used 2 attack");
                     }
                 }
                 else
                 {
-                    Debug.Log("Can't use single attack");
+                    //Debug.Log("Can't use single attack");
                 }
 
                 break;
@@ -372,7 +412,6 @@ public class Fox : Player
     //прыжок
     protected override void Jump()
     {
-        //onGround = false;
         anim.SetBool("isJump", true);
         countOfJump++;
         _rigidbody.AddForce(transform.up * forceForJump, ForceMode.Impulse);
@@ -381,6 +420,8 @@ public class Fox : Player
     //смерть персонажа
     protected override void Death()
     {
+        //обавляем в счетчик смерть
+        Level.CountNewDeath();
         //если игрок погиб и имеет дополнительные жизни, то начинает с чекпоинта; 
         if (extraLives > 0)
         {
@@ -519,5 +560,10 @@ public class Fox : Player
     public Spell CurrentSecondDamageSpell
     {
         get { return currentSecondDamageSpell; }
+    }
+
+    public float TimerBonus
+    {
+        get { return timerBonus; }
     }
 }
