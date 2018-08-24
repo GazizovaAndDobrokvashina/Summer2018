@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters;
+using System.Security.Cryptography;
 using System.Security.Principal;
 using NUnit.Framework.Internal.Execution;
 using UnityEngine;
@@ -26,71 +27,111 @@ public class Fox : Player
     //сколько прыжков может совершить игрок
     [SerializeField] private int countOfJumMax;
 
-    //колько прыжков сделал игрок
+    //Сколько прыжков сделал игрок
     [SerializeField] private int countOfJump;
 
-    //событие
-    [SerializeField] private UnityEvent _unityEvent;
+    //событие смерти игрока
+    [SerializeField] private UnityEvent _deathEvent;
 
     //нажата ли клавиша прыжка
     [SerializeField] private bool isPressedJump;
 
+    //нажата ли клавиша первого скилла
     [SerializeField] private bool isPressedFirstDamage;
 
+    //нажата ли клавиша второго скилла
     [SerializeField] private bool isPressedSecondDamage;
 
+    //нажата ли клавиша хилки
     [SerializeField] private bool isPressedHeal;
-
 
     //аниматор игрока
     public Animator anim;
 
-    //модель игрока
+    //частички хилки вокруг игрока
     public GameObject partHeal;
+    
+    //событие невозможности использовать скилл
+    [SerializeField] private UnityEvent _cantUseSkillEvent;
 
-    private void Start()
+    //загрузка лисы
+    public void StartFox(Vector3 position)
     {
-        
+        //перемещение на позицию последнего чекпоинта
+        lastCheckpoint = position;
+        transform.position = position;
+
         //здоровье
         maxHealth = 100f;
-        health = 100f;
+        health = PlayerPrefs.GetFloat("HealOfPlayer");
+
         //мана
-        mana = 100f;
+        mana = PlayerPrefs.GetFloat("ManaofPlayer");
         maxMana = 100f;
+
         //скорость передвижения
         speed = 4f;
         defaultSpeed = speed;
+
         //сила прыжка
         forceForJump = 6f;
+
         //rigidbody игрока
         _rigidbody = GetComponent<Rigidbody>();
-        //по молчанию одна дополнительная жизнь
-        extraLives = 2;
+
+        //дополнительные жизни
+        extraLives = PlayerPrefs.GetInt("ExtralivesOfPlayer");
+
         //инициализация списка врагов в триггере игрока
         enemyes = new List<Enemy>();
+
         //максимальное количество прыжков
         countOfJumMax = 1;
         countOfJump = 0;
 
-
-        if (_unityEvent == null)
-            _unityEvent = new UnityEvent();
-
+        //сброс нажатых клавиш
+        isPressedFirstDamage = false;
+        isPressedHeal = false;
+        isPressedSecondDamage = false;
         isPressedJump = false;
+
+        //инициализация магии
+        StartSpells();
     }
 
-    
-    
-    public void StartSpells()
-    {
-        spells = AllSpells.StarterSpellsForFox();
-
+    //получение магии игроком
+    private void StartSpells()
+    {       
+        //забираем доступные спелы
+        spells = AllSpells.GetSpells();
+        
+        //назначаем хилку
         currentHealSpell = spells[0];
-        currentFirstDamageSpell = spells[1];
-        currentSecondDamageSpell = spells[2];
-        currentSecondDamageSpell = spells[2];
+        
+        //находим спелы, которые были активны
+        foreach (Spell spell in spells)
+        {
+            if (spell.NameOfSpell == PlayerPrefs.GetString("NameOfFirstSpell"))
+                currentFirstDamageSpell = spell;
+            if (spell.NameOfSpell == PlayerPrefs.GetString("NameOfSecondSpell"))
+                currentSecondDamageSpell = spell;
+        }
+
     }
 
+    //получить айдишник последнего спела
+    public int GetIDOfLastSpell()
+    {
+        int id = 2;
+        foreach (Spell spell in spells)
+        {
+            if (spell.Id > id)
+                id = spell.Id;
+        }
+
+        return id;
+    }
+    
     private void FixedUpdate()
     {
         //если мана не полная, то восстанавливаем её
@@ -175,7 +216,6 @@ public class Fox : Player
         //использование скилла лечения
         if (Input.GetKeyDown(KeyCode.Q) && !isPressedHeal)
         {
-            Debug.Log("Heal");
             isPressedHeal = true;
             UseSpell(currentHealSpell, 0);
         }
@@ -183,7 +223,7 @@ public class Fox : Player
         //использования скила первой атаки
         if (Input.GetKeyDown(KeyCode.E) && !isPressedFirstDamage)
         {
-           // Debug.Log("first");
+            Debug.Log("First");
             isPressedFirstDamage = true;
             UseSpell(currentFirstDamageSpell, 1);
         }
@@ -191,7 +231,6 @@ public class Fox : Player
         //использование скила второй атаки
         if (Input.GetKeyDown(KeyCode.F) && !isPressedSecondDamage)
         {
-           // Debug.Log("second");
             isPressedSecondDamage = true;
             UseSpell(currentSecondDamageSpell, 2);
         }
@@ -203,28 +242,33 @@ public class Fox : Player
             Jump();
         }
 
+        //если кнопка не нажата, сбрасываем булин
         if (!Input.GetKey(KeyCode.Space))
             isPressedJump = false;
 
+        //если кнопка не нажата, сбрасываем булин
         if (!Input.GetKey(KeyCode.Q))
             isPressedHeal = false;
 
+        //если кнопка не нажата, сбрасываем булин
         if (!Input.GetKey(KeyCode.E))
             isPressedFirstDamage = false;
 
+        //если кнопка не нажата, сбрасываем булин
         if (!Input.GetKey(KeyCode.F))
             isPressedSecondDamage = false;
     }
 
+    //ожидание завершения анимации
     private IEnumerator WaitHealAnimation()
     {
         yield return new WaitUntil(() => !partHeal.GetComponent<Animation>().isPlaying);
         partHeal.SetActive(false);
     }
-
-    //если игрок коснулся, то отмечаем, что он на земле
+    
     private void OnCollisionEnter(Collision other)
     {
+        //если игрок коснулся земли, то сбрасываем прыжки 
         if (other.collider.gameObject.tag == "Ground")
         {
             anim.SetBool("isJump", false);
@@ -236,20 +280,25 @@ public class Fox : Player
     {
         if (other.gameObject.tag == "Enemy" && !other.isTrigger)
         {
+            //добавление врага в список врагов в триггере игрока, если он зашел туда
             enemyes.Add(other.gameObject.GetComponent<Enemy>());
-            //Debug.Log("I add! " + enemyes.Count);
         }
+
+        //если игрок упал в лаву, то он погибает
+        if (other.gameObject.tag == "Lava")
+            TakeDamage(health);
     }
 
     private void OnTriggerExit(Collider other)
     {
+        //удаление врага из списка врагов в триггере игрока, если он вышел оттуда
         if (other.gameObject.tag == "Enemy" && !other.isTrigger)
         {
             enemyes.Remove(other.gameObject.GetComponent<Enemy>());
-            //Debug.Log("I remove! " + enemyes.Count);
         }
     }
 
+    //использование скилла
     protected override void UseSpell(Spell spell, int numberOfAttackSpell)
     {
         //проверяем тип способности
@@ -267,35 +316,32 @@ public class Fox : Player
                     health += spell.Value;
                     if (health > maxHealth)
                         health = maxHealth;
-                    // Debug.Log("Heal");
                 }
                 else
                 {
-                    //  Debug.Log("Can't use heal");
+                    _cantUseSkillEvent.Invoke();
                 }
 
                 break;
 
             //Если тип способности "атакующая по всем врагам"
             case "ALLDAMAGE":
-
+Debug.Log("Second");
                 //если она сохранена на первый спелл игрока или на второй спелл  и достаточно маны, в радиусе поражения есть враги
                 if ((numberOfAttackSpell == 1 && currentCoolDownFirstDamage <= 0 ||
                      numberOfAttackSpell == 2 && currentCoolDownSecondDamage <= 0) && mana >= spell.ManaValue &&
                     enemyes.Count > 0)
                 {
+                    Debug.Log("Third");
                     //тратим ману
                     mana -= spell.ManaValue;
-                    //наносим урон всем врагам
-                    //Debug.Log("count - " + enemyes.Count);
-
+                    
                     //список погибших врагов
                     List<Enemy> diedEnemy = new List<Enemy>();
 
                     //для всех врагов в триггере игрока
                     foreach (Enemy enemy in enemyes)
                     {
-                        //Debug.Log("alldamage");
                         //наносим урон
                         enemy.TakeDamage(spell.Value);
                         //если враг погиб, то запоминаем его, чтобы потом удалить из списка
@@ -315,17 +361,15 @@ public class Fox : Player
                     if (numberOfAttackSpell == 1)
                     {
                         currentCoolDownFirstDamage = spell.Cooldown;
-                        //  Debug.Log("Used 1 attack");
                     }
                     else
                     {
                         currentCoolDownSecondDamage = spell.Cooldown;
-                        //Debug.Log("Used 2 attack");
                     }
                 }
                 else
                 {
-                    // Debug.Log("Can't use all attack");
+                    _cantUseSkillEvent.Invoke();
                 }
 
                 break;
@@ -353,7 +397,6 @@ public class Fox : Player
                         Enemy nearEnemy = FindNearlierEnemy();
                         if (nearEnemy != null)
                         {
-                            Debug.Log("Damage");
                             nearEnemy.TakeDamage(spell.Value);
                             if (nearEnemy.Health <= 0)
                                 enemyes.Remove(nearEnemy);
@@ -364,28 +407,27 @@ public class Fox : Player
                     if (numberOfAttackSpell == 1)
                     {
                         currentCoolDownSecondDamage = spell.Cooldown;
-                        //Debug.Log("Used 1 attack");
                     }
                     else
                     {
                         currentCoolDownSecondDamage = spell.Cooldown;
-                        //Debug.Log("Used 2 attack");
                     }
                 }
                 else
                 {
-                    //Debug.Log("Can't use single attack");
+                    _cantUseSkillEvent.Invoke();
                 }
 
                 break;
         }
     }
 
-
+    //найти ближайшего врага в триггере
     private Enemy FindNearlierEnemy()
     {
         float distance;
         Enemy nearlierEnemy = null;
+        
         if (enemyes.Count != 0)
         {
             distance = Vector3.Distance(transform.position, enemyes[0].gameObject.transform.position);
@@ -404,11 +446,6 @@ public class Fox : Player
         return nearlierEnemy;
     }
 
-    protected override void Move()
-    {
-        throw new System.NotImplementedException();
-    }
-
     //прыжок
     protected override void Jump()
     {
@@ -422,6 +459,7 @@ public class Fox : Player
     {
         //обавляем в счетчик смерть
         Level.CountNewDeath();
+        
         //если игрок погиб и имеет дополнительные жизни, то начинает с чекпоинта; 
         if (extraLives > 0)
         {
@@ -430,7 +468,7 @@ public class Fox : Player
         }
         else
         {
-            _unityEvent.Invoke();
+            _deathEvent.Invoke();
         }
     }
 
@@ -497,6 +535,7 @@ public class Fox : Player
         timerBonus = timer;
     }
 
+    //получение урона игроком
     public void TakeDamage(float damage)
     {
         health -= damage;
@@ -511,6 +550,7 @@ public class Fox : Player
         get { return spells; }
     }
 
+    //установка способности на кнопку
     public void SetDamageSpell(int number, int id)
     {
         foreach (Spell spell in spells)
@@ -525,8 +565,6 @@ public class Fox : Player
                 {
                     currentSecondDamageSpell = spell;
                 }
-
-                //Debug.Log(currentFirstDamageSpell.NameOfSpell);
                 break;
             }
         }

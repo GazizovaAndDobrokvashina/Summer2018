@@ -6,14 +6,18 @@ using UnityEngine.UI;
 
 public class EndOfLevelCanvas : MonoBehaviour
 {
-    public Text text;
+    //текстовое поле со статистикой
+    public Text statistic;
 
-
+    //открыть канву оончания уровня
     public void OpenThisMenu()
     {
+        //остановить игру
         Time.timeScale = 0;
-        text.text = "Врагов убито: " + Level.CountOfEnemies + "\nБонусов собрано: " + Level.CountOfBonuses +
-                    "\nСмертей игрока: " + Level.CountOfDeaths;
+        //вывод статистики уровня
+        statistic.text = "Врагов убито: " + Level.CountOfEnemies + "\nБонусов собрано: " + Level.CountOfBonuses +
+                         "\nСмертей игрока: " + Level.CountOfDeaths;
+        //включить эту канву
         gameObject.SetActive(true);
     }
 }

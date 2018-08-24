@@ -69,8 +69,4 @@ public class HealtAndManaBar : MonoBehaviour {
 		rect.position = new Vector3(rectPosX, rect.position.y, rect.position.z);
 	}
 	
-	public void AdjustCurrentValue(float adjust)
-	{
-		current += adjust;
-	}
 }

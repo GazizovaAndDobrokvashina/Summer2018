@@ -1,17 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using UnityEngine.U2D;
 
 public class Level : MonoBehaviour
 {
-    //Количество врагов на уровне
+    //Количество убитых врагов на уровне
     private static int countOfEnemies;
 
     //количество смертей игрока
     private static int countOfDeaths;
 
-    //количество бонусов на уровне
+    //количество собранных бонусов на уровне
     private static int countOfBonuses;
 
     //массив чекпоинтов на уровне
@@ -20,28 +22,33 @@ public class Level : MonoBehaviour
     //массив врагов на уровне
     private GameObject[] enemyes;
 
+    //массив бонусов
     private GameObject[] bonuses;
 
     //какой чекпоинт был посещен последним
     private static int indexOfLastCheckPoint;
 
+    //атлас иконок спеллов
     public SpriteAtlas atlas;
-    
+
     //ссылка на игрока
     private Fox fox;
-    
+
+    //событие успешного сохранения игры
+    [SerializeField] private UnityEvent _savedSucsessfullyEvent;
+
     //подготовка данных при старте уровня
     private void Start()
     {
+        //выравниваем время
+        Time.timeScale = 1;
+
+        //передаем атлас картинок спеллов спелам
         AllSpells.GenerateSpells(atlas);
-        
-        
-        //находим игрока на уровне
-        fox = GameObject.FindGameObjectWithTag("Player").GetComponent<Fox>();
-        fox.StartSpells();
-        
-        //сбрасываем параметры уровня к стандартным
-        ResetIndexOfLastCheckPointAndCounts();
+
+
+        //сбрасываем параметры уровня к сохраненным
+        GetIndexOfLastCheckPointAndCountsFromSaves();
 
         //находим все чекпоинты на уровне
         GameObject[] objects = GameObject.FindGameObjectsWithTag("Checkpoint");
@@ -56,18 +63,40 @@ public class Level : MonoBehaviour
             checkpoints[checkpoint.Id] = checkpoint;
         }
 
+        //если игра продолжается с сохранения, то выключаем все чекпоинты до этого
+        if (indexOfLastCheckPoint > 0)
+            foreach (Checkpoint checkpoint in checkpoints)
+            {
+                if (checkpoint.Id <= indexOfLastCheckPoint)
+                    checkpoint.gameObject.SetActive(false);
+            }
+
+        //находим игрока на уровне
+        fox = GameObject.FindGameObjectWithTag("Player").GetComponent<Fox>();
+        
+        //выгружаем его данные из сохранения и переносим на место последнего чекпоинта
+        fox.StartFox(checkpoints[indexOfLastCheckPoint].transform.position);
+        
         //находим всех врагов на уровне
         enemyes = GameObject.FindGameObjectsWithTag("Enemy");
-        
+
         //находим все бонусы на уровне
         bonuses = GameObject.FindGameObjectsWithTag("Bonus");
+    }
+
+    //сохранение уровня
+    public void SaveGame()
+    {
+        GameInformation.SaveGame(SceneManager.GetActiveScene().name, indexOfLastCheckPoint, fox.Health, fox.Mana,
+            fox.ExtraLives, fox.CurrentFirstDamageSpell.NameOfSpell, fox.CurrentSecondDamageSpell.NameOfSpell,
+            countOfEnemies, countOfDeaths, countOfBonuses, fox.GetIDOfLastSpell());
+        _savedSucsessfullyEvent.Invoke();
     }
 
     //запись ID посещенного игроком чекпоинта
     public static void ChangeLastCheckPoint(int index)
     {
         indexOfLastCheckPoint = index;
-        Debug.Log("Player Saved at checkpoint " + indexOfLastCheckPoint);
     }
 
     //получить ID последднего посещенного игроком чекпоинта
@@ -87,27 +116,27 @@ public class Level : MonoBehaviour
     {
         countOfBonuses++;
     }
-    
+
     //добавить мерть игрока в счетчик
     public static void CountNewDeath()
     {
         countOfDeaths++;
     }
-       
+
 
     //начать уровнеь заново
     public void RestartLevel()
     {
         //Сбрасываем параметры лисы
         fox.RestartFox(checkpoints[0].transform.position);
-        
+
         //включаем всех врагов на уровне, сбрасываем их параметры к дефолтным
         foreach (GameObject o in enemyes)
         {
             o.SetActive(true);
             o.GetComponent<Enemy>().RestartEnemy();
         }
-        
+
         //включаем все бонусы на уровне
         foreach (GameObject o in bonuses)
         {
@@ -118,10 +147,19 @@ public class Level : MonoBehaviour
         ResetIndexOfLastCheckPointAndCounts();
     }
 
+    //выгрузить данные сохранения
+    void GetIndexOfLastCheckPointAndCountsFromSaves()
+    {
+        indexOfLastCheckPoint = PlayerPrefs.GetInt("IdCheckPoint");
+        countOfEnemies = PlayerPrefs.GetInt("countOfEnemies");
+        countOfDeaths = PlayerPrefs.GetInt("countOfDeaths");
+        countOfBonuses = PlayerPrefs.GetInt("countOfBonuses");
+    }
+
     //сброс посещенных чекпоинтов
     void ResetIndexOfLastCheckPointAndCounts()
     {
-        indexOfLastCheckPoint = -1;
+        indexOfLastCheckPoint = 0;
         countOfEnemies = 0;
         countOfDeaths = 0;
         countOfBonuses = 0;
@@ -141,6 +179,4 @@ public class Level : MonoBehaviour
     {
         get { return countOfBonuses; }
     }
-
-   
 }

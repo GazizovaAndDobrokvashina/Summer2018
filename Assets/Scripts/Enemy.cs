@@ -52,9 +52,9 @@ public class Enemy : Player
         throw new System.NotImplementedException();
     }
 
-    protected override void Move()
+    private void Move()
     {
-        throw new System.NotImplementedException();
+        
     }
 
     protected override void Jump()

@@ -9,6 +9,7 @@ TagManager:
   - Checkpoint
   - Level
   - Bonus
+  - Lava
   layers:
   - Default
   - TransparentFX

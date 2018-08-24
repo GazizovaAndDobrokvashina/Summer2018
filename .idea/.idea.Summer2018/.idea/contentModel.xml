@@ -16,7 +16,6 @@
         <e p="Scripts" t="Include">
           <e p="AllSpells.cs" t="Include" />
           <e p="Bonus.cs" t="Include" />
-          <e p="Bonuses.cs" t="Include" />
           <e p="Checkpoint.cs" t="Include" />
           <e p="DeathMenu.cs" t="Include" />
           <e p="EndOfLevelCanvas.cs" t="Include" />

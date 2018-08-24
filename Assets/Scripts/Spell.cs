@@ -5,17 +5,36 @@ using UnityEngine;
 
 public class Spell
 {
+    //идентификатор 
     private int ID;
+
+    //тип
     private string type;
+
+    //время перезарядки
     private float cooldown;
+
+    //значение
     private float value;
+
+    //сколько требуется маны
     private float manaValue;
+
+    //название магии
     private string nameOfSpell;
+
+    //маленькая иконка
     private Sprite smallSprite;
-    private Sprite largeSpell;
+
+    //большая иконка
+    private Sprite largeSprite;
+
+    //название, выводимое в игре
     private string nameForGame;
 
-    public Spell(int id, string type, float cooldown, float value, float manaValue, string nameOfSpell, string nameForGame)
+    //конструктор
+    public Spell(int id, string type, float cooldown, float value, float manaValue, string nameOfSpell,
+        string nameForGame)
     {
         this.ID = id;
         this.type = type;
@@ -24,9 +43,8 @@ public class Spell
         this.manaValue = manaValue;
         this.nameOfSpell = nameOfSpell;
         this.nameForGame = nameForGame;
-        
     }
-    
+
 
     public float ManaValue
     {
@@ -64,10 +82,10 @@ public class Spell
         set { smallSprite = value; }
     }
 
-    public Sprite LargeSpell
+    public Sprite LargeSprite
     {
-        get { return largeSpell; }
-        set { largeSpell = value; }
+        get { return largeSprite; }
+        set { largeSprite = value; }
     }
 
     public string NameForGame

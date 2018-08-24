@@ -50,15 +50,23 @@ public class GameCanvas : MonoBehaviour
     //текстовое поле, в котором будут отображаться пояснения
     public Text history;
 
+    //кнопка обучения
     public GameObject tutorialButton;
 
     private void Start()
     {
+        //включить кнопку обчения
         tutorialButton.SetActive(true);
+        
         //находим игрока на сцене
         fox = GameObject.FindWithTag("Player").GetComponent<Fox>();
+
+        //устанавливаем подходящие навыки спеллов игрока
+        firstSkill.sprite = fox.CurrentFirstDamageSpell.SmallSprite;
+        secondSkill.sprite = fox.CurrentSecondDamageSpell.SmallSprite;
     }
 
+    //закрыть кнопку обучения
     public void CloseTutorialButton()
     {
         tutorialButton.SetActive(false);
@@ -69,9 +77,11 @@ public class GameCanvas : MonoBehaviour
     {
         //запоминаем, на какой хотим сменить
         whichSpellChoosen = value;
+        
         //выводим на кнопках какую способность на какую позицию назначить
         addSpell1.text = "Установить на первую способность: " + nameOfSpell;
         addSpell2.text = "Установить на вторую способность: " + nameOfSpell;
+        
         //включаем меню смены спеллов
         addSpells.SetActive(true);
     }
@@ -84,22 +94,24 @@ public class GameCanvas : MonoBehaviour
             MenuSpells();
         }
 
+        //отображение кулдауна хилки
         if (fox.CurrentCoolDownHeal > 0)
             HealImage.fillAmount =
                 (fox.CurrentHealSpell.Cooldown - fox.CurrentCoolDownHeal) / fox.CurrentHealSpell.Cooldown;
 
-
+        //отображение кулдауна первого скила
         if (fox.CurrentCoolDownFirstDamage > 0)
             firstSkill.fillAmount =
                 (fox.CurrentFirstDamageSpell.Cooldown - fox.CurrentCoolDownFirstDamage) /
                 fox.CurrentFirstDamageSpell.Cooldown;
 
-
+        //отображение кулдауна второго скила
         if (fox.CurrentCoolDownSecondDamage > 0)
             secondSkill.fillAmount =
                 (fox.CurrentSecondDamageSpell.Cooldown - fox.CurrentCoolDownSecondDamage) /
                 fox.CurrentSecondDamageSpell.Cooldown;
-
+        
+        //отображение кулдауна бонуса
         if (fox.TimerBonus > 0)
         {
             if (!bonusImage.gameObject.activeInHierarchy)
@@ -118,13 +130,16 @@ public class GameCanvas : MonoBehaviour
     {
         //открываем или закрываем меню способностей
         spellsGameObject.SetActive(!spellsGameObject.activeInHierarchy);
+        
         //если меню способностей открыто
         if (spellsGameObject.activeInHierarchy)
         {
             //узнаем у игрока, какие у него есть способности
             List<Spell> spells = fox.Spells;
+            
             //создаем индекс для кнопок
             int index = 0;
+            
             //проходим по всем кнопкам
             foreach (Spell spell in spells)
             {
@@ -133,14 +148,17 @@ public class GameCanvas : MonoBehaviour
                 {
                     //выводим название спелла
                     buttons[index].GetComponentInChildren<Text>().text = spell.NameForGame;
+                    
                     //добавляем листенер на клик
                     buttons[index].GetComponent<Button>().onClick
                         .AddListener(() => ChangeChoosenSpell(spell.Id, spell.NameForGame));
 
-                    buttons[index].GetComponent<Image>().sprite = spell.LargeSpell;
+                    //выводим картинку
+                    buttons[index].GetComponent<Image>().sprite = spell.LargeSprite;
 
                     //включаем кнопку
                     buttons[index].SetActive(true);
+                    
                     //увеличиваем счетчик кнопки
                     index++;
                 }
@@ -159,10 +177,10 @@ public class GameCanvas : MonoBehaviour
         //value - это первая или вторая атакующая способность, whichSpellChoosen передается фоксу и заменяет активный на новый 
         fox.SetDamageSpell(value, whichSpellChoosen);
         ChangeSpriteOnToolBars(value, AllSpells.GetSpellById(whichSpellChoosen).SmallSprite);
+        
         //выключаем менюшки спеллов
         addSpells.SetActive(false);
         spellsGameObject.SetActive(false);
-        // Debug.Log("Saved");
     }
 
     //изменить спрайт в тулбаре, если изменили способность
@@ -178,11 +196,13 @@ public class GameCanvas : MonoBehaviour
         }
     }
 
+    //получить таймер бонуса у игрока
     public void GetTimerBonus()
     {
         timerBonus = fox.TimerBonus;
     }
 
+    //вывести информацию о бонусе
     public void TakeBonusExtraLive()
     {
         if (history.gameObject.activeInHierarchy)
@@ -191,7 +211,8 @@ public class GameCanvas : MonoBehaviour
             history.text = "Подобрана дополнительная жизнь!";
         StartCoroutine(ShowInfo());
     }
-
+    
+    //вывести информацию о бонусе
     public void TakeBonusSpeed()
     {
         if (history.gameObject.activeInHierarchy)
@@ -201,6 +222,7 @@ public class GameCanvas : MonoBehaviour
         StartCoroutine(ShowInfo());
     }
 
+    //вывести информацию о бонусе
     public void TakeBonusJump()
     {
         if (history.gameObject.activeInHierarchy)
@@ -210,6 +232,7 @@ public class GameCanvas : MonoBehaviour
         StartCoroutine(ShowInfo());
     }
 
+    //вывести информацию о событии времени
     public void TimeSlowEvent()
     {
         if (history.gameObject.activeInHierarchy)
@@ -219,6 +242,7 @@ public class GameCanvas : MonoBehaviour
         StartCoroutine(ShowInfo());
     }
 
+    //вывести информацию о событии времени
     public void TimeFastEvent()
     {
         if (history.gameObject.activeInHierarchy)
@@ -228,6 +252,7 @@ public class GameCanvas : MonoBehaviour
         StartCoroutine(ShowInfo());
     }
 
+    //вывести информацию о событии времени
     public void TimeNormalEvent()
     {
         if (history.gameObject.activeInHierarchy)
@@ -236,8 +261,19 @@ public class GameCanvas : MonoBehaviour
             history.text = "Время вернулось в обычное русло!";
         StartCoroutine(ShowInfo());
     }
+    
+    //вывести информацию о невозможности использовать способность
+    public void CantUseSpell()
+    {
+        if (history.gameObject.activeInHierarchy)
+            history.text += "\nНевозможно использовать способность прямо сейчас!";
+        else
+            history.text = "Невозможно использовать способность прямо сейчас!";
+        StartCoroutine(ShowInfo());
+    }
 
-    public void EndBuster()
+    //завершение действия бустера
+    private void EndBuster()
     {
         if (history.gameObject.activeInHierarchy)
             history.text += "\nДействие бустера закончилось!";
@@ -246,6 +282,7 @@ public class GameCanvas : MonoBehaviour
         StartCoroutine(ShowInfo());
     }
 
+    //корутина отображения уведомления
     private IEnumerator ShowInfo()
     {
         history.gameObject.SetActive(true);
