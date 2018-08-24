@@ -50,7 +50,7 @@ public class Fox : Player
 
     //частички хилки вокруг игрока
     public GameObject partHeal;
-    
+
     //событие невозможности использовать скилл
     [SerializeField] private UnityEvent _cantUseSkillEvent;
 
@@ -101,13 +101,15 @@ public class Fox : Player
 
     //получение магии игроком
     private void StartSpells()
-    {       
+    {
         //забираем доступные спелы
         spells = AllSpells.GetSpells();
-        
+
         //назначаем хилку
         currentHealSpell = spells[0];
-        
+
+       // Debug.Log(PlayerPrefs.GetString("NameOfFirstSpell"));
+       // Debug.Log(PlayerPrefs.GetString("NameOfSecondSpell"));
         //находим спелы, которые были активны
         foreach (Spell spell in spells)
         {
@@ -117,6 +119,8 @@ public class Fox : Player
                 currentSecondDamageSpell = spell;
         }
 
+        // Debug.Log(currentFirstDamageSpell.NameOfSpell);
+        // Debug.Log(currentSecondDamageSpell.NameOfSpell);
     }
 
     //получить айдишник последнего спела
@@ -131,7 +135,7 @@ public class Fox : Player
 
         return id;
     }
-    
+
     private void FixedUpdate()
     {
         //если мана не полная, то восстанавливаем её
@@ -223,7 +227,7 @@ public class Fox : Player
         //использования скила первой атаки
         if (Input.GetKeyDown(KeyCode.E) && !isPressedFirstDamage)
         {
-            Debug.Log("First");
+            Debug.Log("First skill E pressed: " + currentFirstDamageSpell.NameOfSpell);
             isPressedFirstDamage = true;
             UseSpell(currentFirstDamageSpell, 1);
         }
@@ -265,7 +269,7 @@ public class Fox : Player
         yield return new WaitUntil(() => !partHeal.GetComponent<Animation>().isPlaying);
         partHeal.SetActive(false);
     }
-    
+
     private void OnCollisionEnter(Collision other)
     {
         //если игрок коснулся земли, то сбрасываем прыжки 
@@ -301,11 +305,14 @@ public class Fox : Player
     //использование скилла
     protected override void UseSpell(Spell spell, int numberOfAttackSpell)
     {
+        Debug.Log("UseSpell with " + spell.NameOfSpell + " " + numberOfAttackSpell);
         //проверяем тип способности
         switch (spell.Type)
         {
+            
             //если это лечение, то применяем на игрока
             case "HEAL":
+                Debug.Log("HEAL");
                 //если способность перезаряжена, маны достаточно и здоровье не полное, то применяем
                 if (currentCoolDownHeal <= 0 && mana >= spell.ManaValue && health < maxHealth)
                 {
@@ -326,16 +333,15 @@ public class Fox : Player
 
             //Если тип способности "атакующая по всем врагам"
             case "ALLDAMAGE":
-Debug.Log("Second");
+                Debug.Log("ALLDAMAGE");
                 //если она сохранена на первый спелл игрока или на второй спелл  и достаточно маны, в радиусе поражения есть враги
                 if ((numberOfAttackSpell == 1 && currentCoolDownFirstDamage <= 0 ||
                      numberOfAttackSpell == 2 && currentCoolDownSecondDamage <= 0) && mana >= spell.ManaValue &&
                     enemyes.Count > 0)
                 {
-                    Debug.Log("Third");
                     //тратим ману
                     mana -= spell.ManaValue;
-                    
+
                     //список погибших врагов
                     List<Enemy> diedEnemy = new List<Enemy>();
 
@@ -376,7 +382,7 @@ Debug.Log("Second");
 
             //Если тип способности "атакующая по одному врагу"  
             case "SINGLEDAMAGE":
-
+                Debug.Log("SINGLEDAMEGE");
                 //если она сохранена на первый спелл игрока или на второй спелл  и достаточно маны, в радиусе поражения есть враги
                 if ((numberOfAttackSpell == 1 && currentCoolDownFirstDamage <= 0 ||
                      numberOfAttackSpell == 2 && currentCoolDownSecondDamage <= 0) && mana >= spell.ManaValue &&
@@ -427,7 +433,7 @@ Debug.Log("Second");
     {
         float distance;
         Enemy nearlierEnemy = null;
-        
+
         if (enemyes.Count != 0)
         {
             distance = Vector3.Distance(transform.position, enemyes[0].gameObject.transform.position);
@@ -459,7 +465,7 @@ Debug.Log("Second");
     {
         //обавляем в счетчик смерть
         Level.CountNewDeath();
-        
+
         //если игрок погиб и имеет дополнительные жизни, то начинает с чекпоинта; 
         if (extraLives > 0)
         {
@@ -565,6 +571,7 @@ Debug.Log("Second");
                 {
                     currentSecondDamageSpell = spell;
                 }
+
                 break;
             }
         }
