@@ -108,8 +108,6 @@ public class Fox : Player
         //назначаем хилку
         currentHealSpell = spells[0];
 
-       // Debug.Log(PlayerPrefs.GetString("NameOfFirstSpell"));
-       // Debug.Log(PlayerPrefs.GetString("NameOfSecondSpell"));
         //находим спелы, которые были активны
         foreach (Spell spell in spells)
         {
@@ -119,8 +117,6 @@ public class Fox : Player
                 currentSecondDamageSpell = spell;
         }
 
-        // Debug.Log(currentFirstDamageSpell.NameOfSpell);
-        // Debug.Log(currentSecondDamageSpell.NameOfSpell);
     }
 
     //получить айдишник последнего спела
@@ -227,7 +223,6 @@ public class Fox : Player
         //использования скила первой атаки
         if (Input.GetKeyDown(KeyCode.E) && !isPressedFirstDamage)
         {
-            Debug.Log("First skill E pressed: " + currentFirstDamageSpell.NameOfSpell);
             isPressedFirstDamage = true;
             UseSpell(currentFirstDamageSpell, 1);
         }
@@ -305,14 +300,12 @@ public class Fox : Player
     //использование скилла
     protected override void UseSpell(Spell spell, int numberOfAttackSpell)
     {
-        Debug.Log("UseSpell with " + spell.NameOfSpell + " " + numberOfAttackSpell);
         //проверяем тип способности
         switch (spell.Type)
         {
             
             //если это лечение, то применяем на игрока
             case "HEAL":
-                Debug.Log("HEAL");
                 //если способность перезаряжена, маны достаточно и здоровье не полное, то применяем
                 if (currentCoolDownHeal <= 0 && mana >= spell.ManaValue && health < maxHealth)
                 {
@@ -333,7 +326,6 @@ public class Fox : Player
 
             //Если тип способности "атакующая по всем врагам"
             case "ALLDAMAGE":
-                Debug.Log("ALLDAMAGE");
                 //если она сохранена на первый спелл игрока или на второй спелл  и достаточно маны, в радиусе поражения есть враги
                 if ((numberOfAttackSpell == 1 && currentCoolDownFirstDamage <= 0 ||
                      numberOfAttackSpell == 2 && currentCoolDownSecondDamage <= 0) && mana >= spell.ManaValue &&
@@ -382,7 +374,6 @@ public class Fox : Player
 
             //Если тип способности "атакующая по одному врагу"  
             case "SINGLEDAMAGE":
-                Debug.Log("SINGLEDAMEGE");
                 //если она сохранена на первый спелл игрока или на второй спелл  и достаточно маны, в радиусе поражения есть враги
                 if ((numberOfAttackSpell == 1 && currentCoolDownFirstDamage <= 0 ||
                      numberOfAttackSpell == 2 && currentCoolDownSecondDamage <= 0) && mana >= spell.ManaValue &&
@@ -412,7 +403,7 @@ public class Fox : Player
                     //отправляем на перезарядку использованный скилл
                     if (numberOfAttackSpell == 1)
                     {
-                        currentCoolDownSecondDamage = spell.Cooldown;
+                        currentCoolDownFirstDamage = spell.Cooldown;
                     }
                     else
                     {
