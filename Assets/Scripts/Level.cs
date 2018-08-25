@@ -7,6 +7,8 @@ using UnityEngine.U2D;
 
 public class Level : MonoBehaviour
 {
+    [SerializeField] private int IdOfLevel;
+    
     //Количество убитых врагов на уровне
     private static int countOfEnemies;
 
@@ -87,7 +89,8 @@ public class Level : MonoBehaviour
     //сохранение уровня
     public void SaveGame()
     {
-        GameInformation.SaveGame(SceneManager.GetActiveScene().name, indexOfLastCheckPoint, fox.Health, fox.Mana,
+        
+        GameInformation.SaveGame(IdOfLevel, indexOfLastCheckPoint, fox.Health, fox.Mana,
             fox.ExtraLives, fox.CurrentFirstDamageSpell.NameOfSpell, fox.CurrentSecondDamageSpell.NameOfSpell,
             countOfEnemies, countOfDeaths, countOfBonuses, fox.GetIDOfLastSpell());
         _savedSucsessfullyEvent.Invoke();

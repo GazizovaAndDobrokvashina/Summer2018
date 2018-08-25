@@ -22,6 +22,7 @@
           <e p="Enemy.cs" t="Include" />
           <e p="EscapeMenu.cs" t="Include" />
           <e p="Fox.cs" t="Include" />
+          <e p="FoxTutor.cs" t="Include" />
           <e p="GameCanvas.cs" t="Include" />
           <e p="GameInformation.cs" t="Include" />
           <e p="HealhManaController.cs" t="Include" />
@@ -32,6 +33,7 @@
           <e p="Player.cs" t="Include" />
           <e p="Spell.cs" t="Include" />
           <e p="TimeLevel.cs" t="Include" />
+          <e p="TutorLevel.cs" t="Include" />
         </e>
       </e>
       <e p="Library" t="ExcludeRecursive" />

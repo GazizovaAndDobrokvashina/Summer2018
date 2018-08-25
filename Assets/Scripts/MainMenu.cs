@@ -9,10 +9,13 @@ public class MainMenu : MonoBehaviour
     public void StartNewGame()
     {
         //сохраняем дефолтные значения
-        GameInformation.SaveGame("TimeLevel", 0, 100f, 100f, 2, "RainOfFire","FireArrow", 0, 0, 0, 2);
+        GameInformation.SaveGame(0, 0, 100f, 100f, 2, "RainOfFire","FireArrow", 0, 0, 0, 2);
+
         
-        //включаем уровень
-        Continue();
+        //должен быть ещё включение комикса
+        
+        //загружаем уровень обучения
+        SceneManager.LoadScene("Tutorial");
     }
 
     //загрузка сохраненного уровня

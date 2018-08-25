@@ -7,16 +7,25 @@ public static class GameInformation
     //получить название уровня, на котором игрок был в последний раз
     public static string GetNameOfLevel()
     {
-        return PlayerPrefs.GetString("NameOfLevel");
+
+        switch (PlayerPrefs.GetInt("IDLevel"))
+        {
+                case 0:
+                    return "Tutorial";
+                case 1:
+                    return "TimeLevel";
+        }
+        return null;
     }
 
     //сохранить игру
-    public static void SaveGame(string NameOfLevel, int IdCheckPoint, float HealOfPlayer, float ManaofPlayer,
+    public static void SaveGame(int IDLevel, int IdCheckPoint, float HealOfPlayer, float ManaofPlayer,
         int ExtralivesOfPlayer, string NameOfFirstSpell, string NameOfSecondSpell, int countOfEnemies,
         int countOfDeaths, int countOfBonuses, int IDOfLastSpell)
     {
         //название уровня
-        PlayerPrefs.SetString("NameOfLevel", NameOfLevel);
+        //PlayerPrefs.SetString("NameOfLevel", NameOfLevel);
+        PlayerPrefs.SetInt("IDLevel", IDLevel);
 
         //номер чекпоинта
         PlayerPrefs.SetInt("IdCheckPoint", IdCheckPoint);
@@ -47,5 +56,8 @@ public static class GameInformation
 
         //ID полседнего скилла, который игрок подобрал
         PlayerPrefs.SetInt("IDOfLastSpell", IDOfLastSpell);
+        
+        //записываем на диск
+        PlayerPrefs.Save();
     }
 }
