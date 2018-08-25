@@ -17,6 +17,20 @@ public static class GameInformation
         }
         return null;
     }
+       
+  //получить по айди название уровня
+    public static string GetNameOfLevelByID(int id)
+    {
+
+        switch (id)
+        {
+            case 0:
+                return "Tutorial";
+            case 1:
+                return "TimeLevel";
+        }
+        return null;
+    }
 
     //сохранить игру
     public static void SaveGame(int IDLevel, int IdCheckPoint, float HealOfPlayer, float ManaofPlayer,
