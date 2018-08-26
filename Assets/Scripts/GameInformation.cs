@@ -33,14 +33,17 @@ public static class GameInformation
     }
 
     //сохранить игру
-    public static void SaveGame(int IDLevel, int IdCheckPoint, float HealOfPlayer, float ManaofPlayer,
+    public static void SaveGame(int IDLevel, int PlayerOnTutorLvl, int IdCheckPoint, float HealOfPlayer, float ManaofPlayer,
         int ExtralivesOfPlayer, string NameOfFirstSpell, string NameOfSecondSpell, int countOfEnemies,
-        int countOfDeaths, int countOfBonuses, int IDOfLastSpell)
+        int countOfDeaths, int countOfBonuses, int IDOfLastSpell, int TutorFinished)
     {
         //название уровня
         //PlayerPrefs.SetString("NameOfLevel", NameOfLevel);
         PlayerPrefs.SetInt("IDLevel", IDLevel);
 
+        //игрок в последний раз находился на уровне с порталми или непосредственно на игровых уровнях (0 - тутор, 1 - где-то на игровом)
+        PlayerPrefs.SetInt("PlayerOnTutorLvl", PlayerOnTutorLvl);
+        
         //номер чекпоинта
         PlayerPrefs.SetInt("IdCheckPoint", IdCheckPoint);
 
@@ -70,6 +73,9 @@ public static class GameInformation
 
         //ID полседнего скилла, который игрок подобрал
         PlayerPrefs.SetInt("IDOfLastSpell", IDOfLastSpell);
+
+        //прошел ли игрок обучение (0 - нет, 1 - да)
+        PlayerPrefs.SetInt("TutorFinished", TutorFinished);
         
         //записываем на диск
         PlayerPrefs.Save();

@@ -9,11 +9,10 @@ public class MainMenu : MonoBehaviour
     public void StartNewGame()
     {
         //сохраняем дефолтные значения
-        GameInformation.SaveGame(0, 0, 100f, 100f, 2, "RainOfFire","FireArrow", 0, 0, 0, 2);
+        GameInformation.SaveGame(0, 0, 0, 100f, 100f, 2, "RainOfFire", "FireArrow", 0, 0, 0, 2, 0);
 
-        
         //должен быть ещё включение комикса
-        
+
         //загружаем уровень обучения
         SceneManager.LoadScene("Tutorial");
     }
@@ -21,8 +20,9 @@ public class MainMenu : MonoBehaviour
     //загрузка сохраненного уровня
     public void Continue()
     {
-        //загружаем сцену по названию
-        SceneManager.LoadScene(GameInformation.GetNameOfLevel());
+        SceneManager.LoadScene(PlayerPrefs.GetInt("PlayerOnTutorLvl") == 0
+            ? "Tutorial"
+            : GameInformation.GetNameOfLevel());
     }
 
     //выход из игры

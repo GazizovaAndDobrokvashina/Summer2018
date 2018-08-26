@@ -10,6 +10,7 @@ TagManager:
   - Level
   - Bonus
   - Lava
+  - Water
   layers:
   - Default
   - TransparentFX

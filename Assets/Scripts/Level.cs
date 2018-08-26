@@ -36,6 +36,18 @@ public class Level : MonoBehaviour
     //ссылка на игрока
     private Fox fox;
 
+    private static bool gameSaved = false;
+
+    public static bool GameSaved
+    {
+        get { return gameSaved; }
+    }
+
+    public static void GameDidntSavedYet()
+    {
+        gameSaved = false;
+    }
+
     //событие успешного сохранения игры
     [SerializeField] private UnityEvent _savedSucsessfullyEvent;
 
@@ -77,7 +89,7 @@ public class Level : MonoBehaviour
         fox = GameObject.FindGameObjectWithTag("Player").GetComponent<Fox>();
         
         //выгружаем его данные из сохранения и переносим на место последнего чекпоинта
-        fox.StartFox(checkpoints[indexOfLastCheckPoint].transform.position);
+        fox.StartFox(checkpoints[indexOfLastCheckPoint].transform.position, checkpoints[indexOfLastCheckPoint].transform.rotation);
         
         //находим всех врагов на уровне
         enemyes = GameObject.FindGameObjectsWithTag("Enemy");
@@ -90,10 +102,10 @@ public class Level : MonoBehaviour
     public void SaveGame()
     {
         
-        GameInformation.SaveGame(IdOfLevel, indexOfLastCheckPoint, fox.Health, fox.Mana,
+        GameInformation.SaveGame(IdOfLevel, 1, indexOfLastCheckPoint, fox.Health, fox.Mana,
             fox.ExtraLives, fox.CurrentFirstDamageSpell.NameOfSpell, fox.CurrentSecondDamageSpell.NameOfSpell,
-            countOfEnemies, countOfDeaths, countOfBonuses, fox.GetIDOfLastSpell());
-        _savedSucsessfullyEvent.Invoke();
+            countOfEnemies, countOfDeaths, countOfBonuses, fox.GetIDOfLastSpell(), 1);
+        gameSaved = true;
     }
 
     //запись ID посещенного игроком чекпоинта

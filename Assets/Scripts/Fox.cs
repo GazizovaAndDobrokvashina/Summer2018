@@ -13,7 +13,9 @@ public class Fox : Player
     [SerializeField] private int extraLives;
 
     //месторасположение последнего чекпоинта
-    [SerializeField] private Vector3 lastCheckpoint;
+    [SerializeField] private Vector3 lastCheckpointPos;
+
+    [SerializeField] private Quaternion lastCheckpointRot;
 
     //список враов в триггере игрока
     private List<Enemy> enemyes;
@@ -54,13 +56,16 @@ public class Fox : Player
     //событие невозможности использовать скилл
     [SerializeField] private UnityEvent _cantUseSkillEvent;
 
+    private bool inWater;
+
     //загрузка лисы
-    public void StartFox(Vector3 position)
+    public void StartFox(Vector3 position, Quaternion rot)
     {
         //перемещение на позицию последнего чекпоинта
-        lastCheckpoint = position;
+        lastCheckpointPos = position;
+        lastCheckpointRot = rot;
         transform.position = position;
-
+        transform.rotation = rot;
         //здоровье
         maxHealth = 100f;
         health = PlayerPrefs.GetFloat("HealOfPlayer");
@@ -95,6 +100,7 @@ public class Fox : Player
         isPressedSecondDamage = false;
         isPressedJump = false;
 
+        inWater = false;
         //инициализация магии
         StartSpells();
     }
@@ -116,7 +122,6 @@ public class Fox : Player
             if (spell.NameOfSpell == PlayerPrefs.GetString("NameOfSecondSpell"))
                 currentSecondDamageSpell = spell;
         }
-
     }
 
     //получить айдишник последнего спела
@@ -174,8 +179,18 @@ public class Fox : Player
         //движение вперед
         if (Input.GetKey(KeyCode.W))
         {
-            transform.position += transform.forward * speed * Time.deltaTime;
-            anim.SetFloat("speed", 1f);
+            if (!inWater)
+            {
+                transform.position += transform.forward * speed * Time.deltaTime;
+                anim.SetFloat("speed", 1f);
+            }
+            else
+            {
+                transform.position += transform.forward * speed/2 * Time.deltaTime;
+                anim.SetFloat("speed", 2f);
+            }
+ 
+            
         }
 
         //стоим на месте
@@ -267,31 +282,43 @@ public class Fox : Player
 
     private void OnCollisionEnter(Collision other)
     {
-        //если игрок коснулся земли, то сбрасываем прыжки 
-        if (other.collider.gameObject.tag == "Ground")
+        //если игрок коснулся земли или воды, то сбрасываем прыжки 
+        if (other.collider.gameObject.CompareTag("Ground") || other.collider.gameObject.CompareTag("Water"))
         {
             anim.SetBool("isJump", false);
             countOfJump = 0;
+        }
+
+        //если игрок упал в лаву, то он погибает
+        if (other.gameObject.CompareTag("Lava"))
+            TakeDamage(health);
+
+        if (other.collider.gameObject.CompareTag("Water"))
+            inWater = true;
+    }
+
+    private void OnCollisionExit(Collision other)
+    {
+        //если игрок вышел из воды, то возвращаем бег 
+        if (other.collider.gameObject.CompareTag("Water"))
+        {
+            inWater = false;
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Enemy" && !other.isTrigger)
+        if (other.gameObject.CompareTag("Enemy") && !other.isTrigger)
         {
             //добавление врага в список врагов в триггере игрока, если он зашел туда
             enemyes.Add(other.gameObject.GetComponent<Enemy>());
         }
-
-        //если игрок упал в лаву, то он погибает
-        if (other.gameObject.tag == "Lava")
-            TakeDamage(health);
     }
 
     private void OnTriggerExit(Collider other)
     {
         //удаление врага из списка врагов в триггере игрока, если он вышел оттуда
-        if (other.gameObject.tag == "Enemy" && !other.isTrigger)
+        if (other.gameObject.CompareTag("Enemy") && !other.isTrigger)
         {
             enemyes.Remove(other.gameObject.GetComponent<Enemy>());
         }
@@ -303,7 +330,6 @@ public class Fox : Player
         //проверяем тип способности
         switch (spell.Type)
         {
-            
             //если это лечение, то применяем на игрока
             case "HEAL":
                 //если способность перезаряжена, маны достаточно и здоровье не полное, то применяем
@@ -461,7 +487,9 @@ public class Fox : Player
         if (extraLives > 0)
         {
             extraLives--;
-            transform.position = lastCheckpoint;
+            transform.position = lastCheckpointPos;
+            transform.rotation = lastCheckpointRot;
+            health = maxHealth;
         }
         else
         {
@@ -497,9 +525,10 @@ public class Fox : Player
     }
 
     //сохранить месторасположение последнего чекпоинта
-    public void SaveLastCheckPoint(Vector3 position)
+    public void SaveLastCheckPoint(Vector3 position, Quaternion rot)
     {
-        lastCheckpoint = position;
+        lastCheckpointPos = position;
+        lastCheckpointRot = rot;
     }
 
     //добавить дополнительную жизнь

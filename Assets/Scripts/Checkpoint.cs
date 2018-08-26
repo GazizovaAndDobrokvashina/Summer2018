@@ -14,7 +14,7 @@ public class Checkpoint : MonoBehaviour
         if (other.gameObject.tag == "Player" && (ID > Level.GetIndexOfLastCheckPoint() || ID == 0) && !other.isTrigger)
         {
             Level.ChangeLastCheckPoint(ID);
-            other.gameObject.GetComponent<Fox>().SaveLastCheckPoint(transform.position);
+            other.gameObject.GetComponent<Fox>().SaveLastCheckPoint(transform.position, transform.rotation);
             gameObject.SetActive(false);
         }
     }
