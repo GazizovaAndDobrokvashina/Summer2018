@@ -80,4 +80,13 @@ public static class GameInformation
         //записываем на диск
         PlayerPrefs.Save();
     }
+
+    public static void SaveGameFromTutorialLevel()
+    {     
+        //игрок в последний раз находился на уровне с порталми или непосредственно на игровых уровнях (0 - тутор, 1 - где-то на игровом)
+        PlayerPrefs.SetInt("PlayerOnTutorLvl", 0);
+        
+        //записываем на диск
+        PlayerPrefs.Save();
+    }
 }

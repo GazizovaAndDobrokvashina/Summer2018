@@ -17,6 +17,7 @@
         <e p="Scripts" t="Include">
           <e p="AllSpells.cs" t="Include" />
           <e p="Bonus.cs" t="Include" />
+          <e p="CameraMove.cs" t="Include" />
           <e p="Checkpoint.cs" t="Include" />
           <e p="DeathMenu.cs" t="Include" />
           <e p="DialogsOnTutor.cs" t="Include" />
@@ -31,6 +32,7 @@
           <e p="HealtAndManaBar.cs" t="Include" />
           <e p="Level.cs" t="Include" />
           <e p="MainMenu.cs" t="Include" />
+          <e p="PauseInTutor.cs" t="Include" />
           <e p="PauseMenu.cs" t="Include" />
           <e p="Player.cs" t="Include" />
           <e p="PortalToLEvel.cs" t="Include" />
@@ -39,6 +41,7 @@
           <e p="TimeLevel.cs" t="Include" />
           <e p="TutorCanvas.cs" t="Include" />
           <e p="TutorLevel.cs" t="Include" />
+          <e p="TutTrig.cs" t="Include" />
         </e>
         <e p="Standard Assets" t="Include">
           <e p="Environment" t="Include">

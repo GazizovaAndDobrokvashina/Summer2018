@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class FoxTutor : MonoBehaviour
 {
@@ -25,9 +26,15 @@ public class FoxTutor : MonoBehaviour
     //сила прыжка
     [SerializeField] protected float forceForJump;
 
+    private bool _inWallTrig;
+
+    [SerializeField] private UnityEvent _crashhWall;
+    [SerializeField] private UnityEvent _tutAttack;
+
     //загрузка лисы
     private void Start()
     {
+        _inWallTrig = false;
         //скорость передвижения
         speed = 4f;
 
@@ -99,12 +106,15 @@ public class FoxTutor : MonoBehaviour
         //если кнопка не нажата, сбрасываем булин
         if (!Input.GetKey(KeyCode.Space))
             isPressedJump = false;
+        
+        if(Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.F))
+            CrashWall();
     }
 
     private void OnCollisionEnter(Collision other)
     {
         //если игрок коснулся земли, то сбрасываем прыжки 
-        if (other.collider.gameObject.tag == "Ground")
+        if (other.collider.gameObject.CompareTag("Ground"))
         {
             anim.SetBool("isJump", false);
             countOfJump = 0;
@@ -113,10 +123,26 @@ public class FoxTutor : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.CompareTag("GlassWall"))
+        {
+            _inWallTrig = true;
+            if(TutorLevel.BookReaded && !TutorLevel.WallCrashed)
+                _tutAttack.Invoke();
+        }
+            
     }
 
     private void OnTriggerExit(Collider other)
     {
+        if (other.gameObject.CompareTag("GlassWall"))
+            _inWallTrig = false;
+    }
+
+    private void CrashWall()
+    {
+        if(TutorLevel.BookReaded && _inWallTrig && !TutorLevel.WallCrashed)
+            _crashhWall.Invoke();
+            
     }
 
     //прыжок
