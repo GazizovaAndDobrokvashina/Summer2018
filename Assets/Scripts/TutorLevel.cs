@@ -8,7 +8,8 @@ public class TutorLevel : MonoBehaviour
 {
     private static bool _wallCrashed;
     private static bool _bookReaded;
-    
+    public GameObject invisibleDoor;
+
     private void Start()
     {
         if (PlayerPrefs.GetInt("TutorFinished") == 1)
@@ -16,22 +17,24 @@ public class TutorLevel : MonoBehaviour
             CrashWall();
             _wallCrashed = true;
             _bookReaded = true;
+            invisibleDoor.SetActive(false);
         }
         else
         {
+            invisibleDoor.SetActive(true);
             _wallCrashed = false;
             _bookReaded = false;
         }
-                   
     }
 
     private IEnumerator BreakWall()
     {
+        invisibleDoor.SetActive(false);
         for (int i = 0; i < transform.childCount; i++)
         {
             Rigidbody block = transform.GetChild(i).GetComponent<Rigidbody>();
             block.constraints = 0;
-            Vector3 vec = new Vector3(Random.Range(10,100),Random.Range(10,100),Random.Range(10,100));
+            Vector3 vec = new Vector3(Random.Range(10, 100), Random.Range(10, 100), Random.Range(10, 100));
             block.AddTorque(vec);
             block.AddForce(vec);
         }

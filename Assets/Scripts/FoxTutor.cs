@@ -17,6 +17,8 @@ public class FoxTutor : MonoBehaviour
     //нажата ли клавиша прыжка
     [SerializeField] private bool isPressedJump;
 
+    [SerializeField] private bool alreadhKnowAboutAttack;
+
     //аниматор игрока
     public Animator anim;
 
@@ -50,6 +52,15 @@ public class FoxTutor : MonoBehaviour
 
         //сброс нажатых клавиш
         isPressedJump = false;
+        
+        if (PlayerPrefs.GetInt("TutorFinished") == 0)
+        {
+            alreadhKnowAboutAttack = false;
+        }
+        else
+        {
+            alreadhKnowAboutAttack = true;
+        }
     }
 
     private void FixedUpdate()
@@ -106,15 +117,18 @@ public class FoxTutor : MonoBehaviour
         //если кнопка не нажата, сбрасываем булин
         if (!Input.GetKey(KeyCode.Space))
             isPressedJump = false;
-        
-        if(Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.F))
+
+        if ((Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.F)))
+        {
             CrashWall();
+        }
+            
     }
 
     private void OnCollisionEnter(Collision other)
     {
         //если игрок коснулся земли, то сбрасываем прыжки 
-        if (other.collider.gameObject.CompareTag("Ground"))
+        if (other.collider.gameObject.CompareTag("Ground") || other.collider.gameObject.CompareTag("Brick"))
         {
             anim.SetBool("isJump", false);
             countOfJump = 0;
@@ -126,8 +140,13 @@ public class FoxTutor : MonoBehaviour
         if (other.gameObject.CompareTag("GlassWall"))
         {
             _inWallTrig = true;
-            if(TutorLevel.BookReaded && !TutorLevel.WallCrashed)
+            if (TutorLevel.BookReaded && !TutorLevel.WallCrashed && !alreadhKnowAboutAttack)
+            {
+                
+                alreadhKnowAboutAttack = true;
                 _tutAttack.Invoke();
+            }
+                
         }
             
     }

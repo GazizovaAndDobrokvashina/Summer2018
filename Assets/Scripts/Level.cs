@@ -143,7 +143,7 @@ public class Level : MonoBehaviour
     public void RestartLevel()
     {
         //Сбрасываем параметры лисы
-        fox.RestartFox(checkpoints[0].transform.position);
+        fox.RestartFox(checkpoints[0].transform.position, checkpoints[0].transform.rotation);
 
         //включаем всех врагов на уровне, сбрасываем их параметры к дефолтным
         foreach (GameObject o in enemyes)
@@ -158,8 +158,19 @@ public class Level : MonoBehaviour
             o.SetActive(true);
         }
 
+        foreach (Checkpoint checkpoint in checkpoints)
+        {
+            checkpoint.gameObject.SetActive(true);
+        }
+
         //сбрасываем посещенные чекпоинты
         ResetIndexOfLastCheckPointAndCounts();
+
+        //выставляем обычное время
+        Time.timeScale = 1;
+        
+        //сохраняем данные
+        SaveGame();
     }
 
     //выгрузить данные сохранения

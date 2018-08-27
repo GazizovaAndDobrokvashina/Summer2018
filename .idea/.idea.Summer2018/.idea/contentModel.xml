@@ -42,6 +42,7 @@
           <e p="TutorCanvas.cs" t="Include" />
           <e p="TutorLevel.cs" t="Include" />
           <e p="TutTrig.cs" t="Include" />
+          <e p="Wear.cs" t="Include" />
         </e>
         <e p="Standard Assets" t="Include">
           <e p="Environment" t="Include">

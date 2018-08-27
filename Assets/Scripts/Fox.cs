@@ -498,7 +498,7 @@ public class Fox : Player
     }
 
     //сбросить параметры лисы к начальным
-    public void RestartFox(Vector3 statrLevel)
+    public void RestartFox(Vector3 statrLevel, Quaternion startRot)
     {
         health = maxHealth;
         mana = maxMana;
@@ -507,6 +507,8 @@ public class Fox : Player
         currentCoolDownFirstDamage = 0;
         currentCoolDownSecondDamage = 0;
         transform.position = statrLevel;
+        transform.rotation = startRot;
+        timerBonus = 0;
     }
 
     public float Health
