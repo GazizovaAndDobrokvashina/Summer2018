@@ -66,6 +66,11 @@ public class Bonus : MonoBehaviour
             _bonusEvent.Invoke();
     }
 
+    private void FixedUpdate()
+    {
+        transform.Rotate(Vector3.down);
+    }
+
     //если в триггер бонуса попал игрок, то используем бонус
     private void OnTriggerEnter(Collider other)
     {

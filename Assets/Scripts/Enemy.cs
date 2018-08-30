@@ -4,8 +4,33 @@ using UnityEngine;
 
 public class Enemy : Player
 {
-    private void Start()
+    //зона, где враг может ходить
+    [SerializeField] private GameObject enemyZone;
+
+    //жив ли враг
+    [SerializeField] private bool isAlive;
+
+    //случайное значение для определения направления движения призрака
+    [SerializeField] private int randomValue;
+
+    //находится ли враг в своей зоне
+    [SerializeField] private bool inEnemyZone;
+
+    //находится ли игрок в зоне врага
+    [SerializeField] private bool playerInEnemyZone;
+
+    [SerializeField] private bool playerOnDistanceForAttack;
+
+    //игрок, которого надо преследовать и атаковать
+    [SerializeField] private GameObject playerTarget;
+    
+
+    public void StartEnemy()
     {
+        playerTarget = GameObject.FindWithTag("Player");
+        playerInEnemyZone = false;
+        playerOnDistanceForAttack = false;
+        isAlive = true;
         //здоровье
         maxHealth = 100f;
         health = 100f;
@@ -13,21 +38,44 @@ public class Enemy : Player
         mana = 100f;
         maxMana = 100f;
         //скорость передвижения
-        speed = 15f;
+        speed = 1f;
         //сила прыжка
         forceForJump = 6f;
         //rigidbody игрока
         _rigidbody = GetComponent<Rigidbody>();
 
-        //ТЕСТОВЫЕ ДАННЫЕ
-        spells = new List<Spell>();
-//        spells[0] = new Spell("HEAL", 1f, 20f, 10f);
-//        spells[1] = new Spell("ALLDAMAGE", 4f, 20f, 20f);
-//        spells[2] = new Spell("SINGLEDAMAGE", 3f, 15f, 15f);
+        currentFirstDamageSpell = AllSpells.GetRandomSpellForEnemy();
+        StartCoroutine(Move());
+    }
 
-//        currentHealSpell = spells[0];
-//        currentFirstDamageSpell = spells[1];
-//        currentSecondDamageSpell = spells[2];
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("EnemyZone"))
+        {
+            if (enemyZone == null)
+                enemyZone = other.gameObject;
+            inEnemyZone = true;
+        }
+
+        if (other.gameObject.CompareTag("Player") && !other.isTrigger)
+        {
+            playerOnDistanceForAttack = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("EnemyZone"))
+        {
+            //возвращаемся к родному триггеру
+            inEnemyZone = false;
+            randomValue = 4;
+        }
+
+        if (other.gameObject.CompareTag("Player") && !other.isTrigger)
+        {
+            playerOnDistanceForAttack = false;
+        }
     }
 
     private void FixedUpdate()
@@ -36,6 +84,60 @@ public class Enemy : Player
             mana += Time.deltaTime;
         if (mana > maxMana)
             mana = maxMana;
+
+        if (currentCoolDownFirstDamage > 0)
+            currentCoolDownFirstDamage -= Time.deltaTime;
+
+        if (!playerInEnemyZone && !playerOnDistanceForAttack)
+        {
+            if (inEnemyZone && randomValue < 4)
+            {
+                if (randomValue == 0)
+                {
+                    transform.position += transform.forward * speed * Time.deltaTime;
+                }
+                else if (randomValue == 1)
+                {
+                    transform.Rotate(Vector3.down);
+                    transform.position += transform.forward * speed * Time.deltaTime;
+                }
+                else if (randomValue == 2)
+                {
+                    transform.Rotate(-Vector3.down);
+                    transform.position += transform.forward * speed * Time.deltaTime;
+                }
+            }
+            else
+            {
+                transform.rotation =
+                    Quaternion.LookRotation(enemyZone.transform.position - transform.position, Vector3.up);
+
+                float step = speed * Time.deltaTime;
+                transform.position = Vector3.MoveTowards(transform.position, enemyZone.transform.position, step);
+                if ((transform.position - enemyZone.transform.position).magnitude < 0.6f)
+                {
+                    randomValue = 3;
+                }
+            }
+        }
+        else
+        {
+            //поворачиваем к игроку
+            transform.rotation =
+                Quaternion.LookRotation(playerTarget.transform.position - transform.position, Vector3.up);
+            //если игрок в зоне врага и не в радиусе атаки, то преследуем
+            if (playerInEnemyZone && !playerOnDistanceForAttack)
+            {
+                float step = speed * Time.deltaTime;
+                transform.position = Vector3.MoveTowards(transform.position, playerTarget.transform.position, step);
+            }
+
+            //если игрок в радиусе атаки
+            if (playerOnDistanceForAttack && currentCoolDownFirstDamage <= 0 && mana >= currentFirstDamageSpell.ManaValue)
+            {
+                UseSpell(currentFirstDamageSpell, 1);
+            }
+        }
     }
 
     public void TakeDamage(float damage)
@@ -49,13 +151,25 @@ public class Enemy : Player
 
     protected override void UseSpell(Spell spell, int numberOfAttackSpell)
     {
-        throw new System.NotImplementedException();
+        mana -= spell.ManaValue;
+        currentCoolDownFirstDamage = spell.Cooldown;
+        playerTarget.GetComponent<Fox>().TakeDamage(spell.Value);
+        Debug.Log("Attack");
     }
 
-    private void Move()
+    private IEnumerator Move()
     {
-        
+        //пока враг жив
+        while (isAlive)
+        {
+            //ждем 10 секунд
+            yield return new WaitForSeconds(5f * Time.timeScale);
+
+            //рандомим направление
+            randomValue = Random.Range(0, 4);
+        }
     }
+
 
     protected override void Jump()
     {
@@ -64,6 +178,7 @@ public class Enemy : Player
 
     protected override void Death()
     {
+        isAlive = false;
         gameObject.SetActive(false);
         Level.CountNewEnemy();
     }
@@ -72,8 +187,17 @@ public class Enemy : Player
     {
         health = maxHealth;
         mana = maxMana;
-        
-        //дописать рестарт кулдаунов способностей, когда пропишем способности для ботов
+        isAlive = true;
+        currentCoolDownFirstDamage = 0;
+    }
+
+    public void FollowPlayer()
+    {
+        playerInEnemyZone = !playerInEnemyZone;
+//        if(playerInEnemyZone)            
+//            StopCoroutine(Move());
+//        else if (!playerInEnemyZone && !playerOnDistanceForAttack)
+//            StartCoroutine(Move());
     }
 
     public float Health

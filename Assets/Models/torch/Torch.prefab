@@ -86,8 +86,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1025414109690618}
   m_LocalRotation: {x: -0.45150387, y: 0.5442365, z: 0.54433423, w: 0.45127732}
-  m_LocalPosition: {x: -0.412, y: 1.42, z: -8.87}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalPosition: {x: -13.742059, y: -3.501, z: 9.79069}
+  m_LocalScale: {x: 100.000015, y: 100.000015, z: 100.000015}
   m_Children:
   - {fileID: 4791701685752238}
   m_Father: {fileID: 0}
@@ -148,7 +148,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 5c1cf1ae90430be4799eb00c6be61cc3, type: 2}
+  - {fileID: 2100000, guid: a0f6b5729304e3b408ef0e7453ab5225, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -235,7 +235,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 400601334
+  randomSeed: 2142948907
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3573,7 +3573,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -335692478
+  randomSeed: 2146185470
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -4616,7 +4616,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    tilesX: 8
+    tilesX: 4
     tilesY: 4
     animationType: 0
     rowIndex: 0
@@ -6890,7 +6890,7 @@ ParticleSystem:
   moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1291751749
+  randomSeed: 1640982828
   InitialModule:
     serializedVersion: 3
     enabled: 1

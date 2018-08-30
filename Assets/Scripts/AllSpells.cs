@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.U2D;
+using Random = UnityEngine.Random;
 
 public static class AllSpells
 {
@@ -69,5 +70,11 @@ public static class AllSpells
         }
 
         return sp;
+    }
+
+    public static Spell GetRandomSpellForEnemy()
+    {
+        int id = Random.Range(1, spells.Count);
+        return spells[id];
     }
 }

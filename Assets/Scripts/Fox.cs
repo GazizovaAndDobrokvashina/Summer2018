@@ -137,6 +137,16 @@ public class Fox : Player
         return id;
     }
 
+    private void Update()
+    {
+        //прыжок
+        if (Input.GetKeyDown(KeyCode.Space) && countOfJumMax > countOfJump && !isPressedJump)
+        {
+            isPressedJump = true;
+            Jump();
+        }
+    }
+
     private void FixedUpdate()
     {
         //если мана не полная, то восстанавливаем её
@@ -249,12 +259,12 @@ public class Fox : Player
             UseSpell(currentSecondDamageSpell, 2);
         }
 
-        //прыжок
-        if (Input.GetKeyDown(KeyCode.Space) && countOfJumMax > countOfJump && !isPressedJump)
-        {
-            isPressedJump = true;
-            Jump();
-        }
+//        //прыжок
+//        if (Input.GetKeyDown(KeyCode.Space) && countOfJumMax > countOfJump && !isPressedJump)
+//        {
+//            isPressedJump = true;
+//            Jump();
+//        }
 
         //если кнопка не нажата, сбрасываем булин
         if (!Input.GetKey(KeyCode.Space))

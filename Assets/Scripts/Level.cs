@@ -94,6 +94,11 @@ public class Level : MonoBehaviour
         //находим всех врагов на уровне
         enemyes = GameObject.FindGameObjectsWithTag("Enemy");
 
+        foreach (GameObject enemye in enemyes)
+        {
+            enemye.GetComponent<Enemy>().StartEnemy();
+        }
+
         //находим все бонусы на уровне
         bonuses = GameObject.FindGameObjectsWithTag("Bonus");
     }
