@@ -22,7 +22,7 @@ public class CameraMove : MonoBehaviour
         {
            
             Debug.Log(hit.collider.gameObject.name);
-            if (hit.distance < maxDistance && !hit.collider.isTrigger)
+            if (hit.distance < maxDistance && !hit.collider.isTrigger && !hit.collider.gameObject.CompareTag("Brick") && !hit.collider.gameObject.CompareTag("Floor"))
                 Camera.main.transform.position = hit.point;
         }
 
