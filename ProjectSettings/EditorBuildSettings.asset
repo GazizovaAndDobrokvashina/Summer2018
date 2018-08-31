@@ -9,8 +9,8 @@ EditorBuildSettings:
     path: Assets/MainMenu.unity
     guid: b8e656163eee7614a8b9cf80cd60a5b8
   - enabled: 1
-    path: Assets/TimeLevel.unity
-    guid: 85f581debc600554d88be7c6409283b2
-  - enabled: 1
     path: Assets/Tutorial.unity
     guid: 540e700567a91db4ab95f90e8ecb821c
+  - enabled: 1
+    path: Assets/TimeLevel.unity
+    guid: 85f581debc600554d88be7c6409283b2

@@ -35,7 +35,7 @@ public static class GameInformation
     //сохранить игру
     public static void SaveGame(int IDLevel, int PlayerOnTutorLvl, int IdCheckPoint, float HealOfPlayer, float ManaofPlayer,
         int ExtralivesOfPlayer, string NameOfFirstSpell, string NameOfSecondSpell, int countOfEnemies,
-        int countOfDeaths, int countOfBonuses, int IDOfLastSpell, int TutorFinished)
+        int countOfDeaths, int countOfBonuses, int IDOfLastSpell, int TutorFinished, int GameFinished)
     {
         //название уровня
         //PlayerPrefs.SetString("NameOfLevel", NameOfLevel);
@@ -76,6 +76,9 @@ public static class GameInformation
 
         //прошел ли игрок обучение (0 - нет, 1 - да)
         PlayerPrefs.SetInt("TutorFinished", TutorFinished);
+        
+        //прошел ли игрок игру (0 - нет, 1 - да)
+        PlayerPrefs.SetInt("GameFinished",GameFinished);
         
         //записываем на диск
         PlayerPrefs.Save();

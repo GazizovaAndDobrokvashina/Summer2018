@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\aleks\.Rider2017.3\system\resharper-host\local\Transient\ReSharperHost\v11\SolutionCaches\_Summer2018.-671425198.00" t="ExcludeRecursive" />
-    <e p="C:\Users\aleks\Documents\University\Unity\Summer2018" t="IncludeRecursive">
+    <e p="C:\Users\Elina\.Rider2017.3\system\resharper-host\local\Transient\ReSharperHost\v11\SolutionCaches\_Summer2018.358575442.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Elina\Documents\Summer2018" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
@@ -16,9 +16,11 @@
         </e>
         <e p="Scripts" t="Include">
           <e p="AllSpells.cs" t="Include" />
+          <e p="BoneClaws.cs" t="Include" />
           <e p="Bonus.cs" t="Include" />
           <e p="CameraMove.cs" t="Include" />
           <e p="Checkpoint.cs" t="Include" />
+          <e p="Comics.cs" t="Include" />
           <e p="DeathMenu.cs" t="Include" />
           <e p="DialogsOnTutor.cs" t="Include" />
           <e p="EndOfLevelCanvas.cs" t="Include" />

@@ -48,8 +48,6 @@ public class Level : MonoBehaviour
         gameSaved = false;
     }
 
-    //событие успешного сохранения игры
-    [SerializeField] private UnityEvent _savedSucsessfullyEvent;
 
     //подготовка данных при старте уровня
     private void Start()
@@ -109,7 +107,7 @@ public class Level : MonoBehaviour
         
         GameInformation.SaveGame(IdOfLevel, 1, indexOfLastCheckPoint, fox.Health, fox.Mana,
             fox.ExtraLives, fox.CurrentFirstDamageSpell.NameOfSpell, fox.CurrentSecondDamageSpell.NameOfSpell,
-            countOfEnemies, countOfDeaths, countOfBonuses, fox.GetIDOfLastSpell(), 1);
+            countOfEnemies, countOfDeaths, countOfBonuses, fox.GetIDOfLastSpell(), 1, PlayerPrefs.GetInt("GameFinished"));
         gameSaved = true;
     }
 

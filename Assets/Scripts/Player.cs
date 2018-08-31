@@ -65,6 +65,7 @@ public abstract class Player : MonoBehaviour
 
     public void PlaySpell(Spell spell, Vector3 position)
     {
+        if(gameObject.activeInHierarchy)
         switch (spell.NameOfSpell)
         {
                 case "RainOfFire" :

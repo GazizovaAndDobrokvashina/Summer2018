@@ -19,9 +19,26 @@ public class TutorCanvas : MonoBehaviour
     private string _endOfPhrase;
     public GameObject tutorButton;
 
-    void Start()
-    {
+//    void Start()
+//    {
+//
+//        catImage = CatIcons.GetComponentInChildren<Image>();
+//        _endOfPhrase = "\n(Кликните в любом месте, чтобы продолжить)";
+//        //если обучение ещё не пройдено, то начинаем обучение
+//        if (PlayerPrefs.GetInt("TutorFinished") == 0)
+//        {
+//            DialogsOnTutor.GenerateDialogs();
+//            NextReplica();
+//            Time.timeScale = 0;
+//        }
+//        else
+//        {
+//            PicturesDialogsWindows.SetActive(false);
+//        }
+//    }
 
+    public void StartTutorial()
+    {
         catImage = CatIcons.GetComponentInChildren<Image>();
         _endOfPhrase = "\n(Кликните в любом месте, чтобы продолжить)";
         //если обучение ещё не пройдено, то начинаем обучение
@@ -70,7 +87,7 @@ public class TutorCanvas : MonoBehaviour
             TutorLevel.BookReaded = true;
         
         if(_replica.Id == 16)
-            GameInformation.SaveGame(0, 0, 0, 100f, 100f, 2, "RainOfFire", "FireArrow", 0, 0, 0, 2, 1);
+            GameInformation.SaveGame(0, 0, 0, 100f, 100f, 2, "RainOfFire", "FireArrow", 0, 0, 0, 2, 1, 0);
     }
 
     private void NextReplica()

@@ -57,6 +57,7 @@ public class Bonus : MonoBehaviour
                 break;
             //коготь
             case "CLAW":
+                PlayerPrefs.SetInt("GameFinished", 1);
                 _endOfLevel.Invoke();
                 break;
         }

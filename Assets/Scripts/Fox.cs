@@ -1,9 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters;
-using System.Security.Cryptography;
-using System.Security.Principal;
-using NUnit.Framework.Internal.Execution;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -153,7 +150,7 @@ public class Fox : Player
     {
         //если мана не полная, то восстанавливаем её
         if (mana < maxMana)
-            mana += Time.deltaTime;
+            mana += Time.deltaTime * 2;
 
         //если мана вышла за пределы максимального значения, то приравниваем к максимальному
         if (mana > maxMana)

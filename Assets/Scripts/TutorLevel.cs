@@ -10,9 +10,12 @@ public class TutorLevel : MonoBehaviour
     private static bool _bookReaded;
     public GameObject invisibleDoor;
     public AudioClip breakingGlass;
+    public GameObject magic;
+    private GameObject fox;
 
     private void Start()
     {
+        fox = GameObject.FindGameObjectWithTag("Player");
         if (PlayerPrefs.GetInt("TutorFinished") == 1)
         {
             CrashWall();
@@ -59,6 +62,32 @@ public class TutorLevel : MonoBehaviour
     public void CrashWall()
     {
         GetComponent<AudioSource>().PlayOneShot(breakingGlass);
+        StartCoroutine(TakeSpike(fox.transform.position));
         StartCoroutine(BreakWall());
+    }
+    
+    private IEnumerator TakeSpike( Vector3 position)
+    {
+        Vector3 placeOfSpike = magic.transform.localPosition;
+        Quaternion rotation = magic.transform.rotation;
+
+
+        magic.transform.position = position;
+        magic.transform.rotation = Quaternion.LookRotation(placeOfSpike-transform.localPosition,Vector3.up);
+        
+        magic.SetActive(true);
+        
+        while ( (placeOfSpike - magic.transform.localPosition).magnitude > 0.1f)
+        {
+            magic.transform.rotation = Quaternion.LookRotation(placeOfSpike-transform.localPosition,Vector3.up);
+            magic.transform.localPosition = Vector3.MoveTowards(magic.transform.localPosition, placeOfSpike, 0.1f);
+            yield return new WaitForEndOfFrame();
+        }
+        
+        magic.SetActive(false);
+        magic.transform.localPosition = placeOfSpike;
+        magic.transform.rotation = rotation;
+        
+        yield break;
     }
 }
