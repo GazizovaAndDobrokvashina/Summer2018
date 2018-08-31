@@ -87,7 +87,7 @@ public class TutorCanvas : MonoBehaviour
             TutorLevel.BookReaded = true;
         
         if(_replica.Id == 16)
-            GameInformation.SaveGame(0, 0, 0, 100f, 100f, 2, "RainOfFire", "FireArrow", 0, 0, 0, 2, 1, 0);
+            GameInformation.SaveGame(0, 0, 0, 100f, 100f, 2, "RainOfFire", "FireArrow", 0, 0, 0, PlayerPrefs.GetInt("IDOfLastSpell"), 1, 0);
     }
 
     private void NextReplica()

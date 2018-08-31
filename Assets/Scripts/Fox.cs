@@ -109,7 +109,7 @@ public class Fox : Player
     {
         //забираем доступные спелы
         spells = AllSpells.GetSpells();
-
+Debug.Log(PlayerPrefs.GetInt("IDOfLastSpell"));
         //назначаем хилку
         currentHealSpell = spells[0];
 
