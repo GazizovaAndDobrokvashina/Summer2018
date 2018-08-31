@@ -23,6 +23,9 @@ public class Enemy : Player
 
     //игрок, которого надо преследовать и атаковать
     [SerializeField] private GameObject playerTarget;
+
+    public AudioClip GrowlClip;
+    private bool growling;
     
 
     public void StartEnemy()
@@ -154,7 +157,8 @@ public class Enemy : Player
         mana -= spell.ManaValue;
         currentCoolDownFirstDamage = spell.Cooldown;
         playerTarget.GetComponent<Fox>().TakeDamage(spell.Value);
-        Debug.Log("Attack");
+        //Debug.Log("Attack");
+        playerTarget.GetComponent<Fox>().PlaySpell(spell, transform.position);
     }
 
     private IEnumerator Move()
@@ -167,6 +171,13 @@ public class Enemy : Player
 
             //рандомим направление
             randomValue = Random.Range(0, 4);
+
+            if (growling)
+            {
+                GetComponent<AudioSource>().PlayOneShot(GrowlClip);
+            }
+
+            growling = !growling;
         }
     }
 

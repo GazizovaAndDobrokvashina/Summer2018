@@ -9,6 +9,7 @@ public class TutorLevel : MonoBehaviour
     private static bool _wallCrashed;
     private static bool _bookReaded;
     public GameObject invisibleDoor;
+    public AudioClip breakingGlass;
 
     private void Start()
     {
@@ -57,6 +58,7 @@ public class TutorLevel : MonoBehaviour
 
     public void CrashWall()
     {
+        GetComponent<AudioSource>().PlayOneShot(breakingGlass);
         StartCoroutine(BreakWall());
     }
 }

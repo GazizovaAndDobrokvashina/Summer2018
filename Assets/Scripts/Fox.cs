@@ -52,6 +52,8 @@ public class Fox : Player
 
     //частички хилки вокруг игрока
     public GameObject partHeal;
+    
+    
 
     //событие невозможности использовать скилл
     [SerializeField] private UnityEvent _cantUseSkillEvent;
@@ -290,6 +292,22 @@ public class Fox : Player
         partHeal.SetActive(false);
     }
 
+    private IEnumerator TakeFireBall()
+    {
+        Vector3 placeOfBall = PartFireBall.transform.localPosition;
+        PartFireBall.SetActive(true);
+        GameObject destination = transform.GetComponentInChildren<Animator>().gameObject;
+        while ( (destination.transform.localPosition -PartFireBall.transform.localPosition).magnitude > 0.1f)
+        {
+            PartFireBall.transform.localPosition = Vector3.MoveTowards(PartFireBall.transform.localPosition, destination.transform.localPosition, Time.deltaTime*Time.timeScale);
+        }
+        
+        PartFireBall.SetActive(false);
+        PartFireBall.transform.localPosition = placeOfBall;
+        
+        yield break;
+    }
+
     private void OnCollisionEnter(Collision other)
     {
         //если игрок коснулся земли или воды, то сбрасываем прыжки 
@@ -378,6 +396,8 @@ public class Fox : Player
                     {
                         //наносим урон
                         enemy.TakeDamage(spell.Value);
+                        
+                        enemy.PlaySpell(spell, transform.position);
                         //если враг погиб, то запоминаем его, чтобы потом удалить из списка
                         if (enemy.Health <= 0)
                             diedEnemy.Add(enemy);
@@ -422,6 +442,8 @@ public class Fox : Player
                     if (enemyes.Count == 1)
                     {
                         enemyes[0].TakeDamage(spell.Value);
+                        
+                        enemyes[0].PlaySpell(spell, transform.position);
                         if (enemyes[0].Health <= 0)
                             enemyes.Remove(enemyes[0]);
                     }
@@ -431,6 +453,8 @@ public class Fox : Player
                         if (nearEnemy != null)
                         {
                             nearEnemy.TakeDamage(spell.Value);
+                            
+                            nearEnemy.PlaySpell(spell, transform.position);
                             if (nearEnemy.Health <= 0)
                                 enemyes.Remove(nearEnemy);
                         }

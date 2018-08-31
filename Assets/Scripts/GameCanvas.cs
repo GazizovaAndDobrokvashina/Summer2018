@@ -115,7 +115,11 @@ public class GameCanvas : MonoBehaviour
         if (fox.TimerBonus > 0)
         {
             if (!bonusImage.gameObject.activeInHierarchy)
+            {
+                GetComponent<AudioSource>().Play();
                 bonusImage.gameObject.SetActive(true);
+            }
+
             bonusImage.fillAmount = fox.TimerBonus / timerBonus;
         }
         else if (fox.TimerBonus <= 0 && bonusImage.gameObject.activeInHierarchy)
@@ -275,6 +279,7 @@ public class GameCanvas : MonoBehaviour
     //завершение действия бустера
     private void EndBuster()
     {
+        GetComponent<AudioSource>().Stop();
         if (history.gameObject.activeInHierarchy)
             history.text += "\nДействие бустера закончилось!";
         else

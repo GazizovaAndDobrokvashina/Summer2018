@@ -20,7 +20,7 @@ public static class AllSpells
             spells.Add(new Spell(0, "HEAL", 1f, 20f, 10f, "heal", "Лечение"));
             spells.Add(new Spell(1, "ALLDAMAGE", 4f, 20f, 20f, "RainOfFire", "Огненный дождь"));
             spells.Add(new Spell(2, "SINGLEDAMAGE", 3f, 15f, 15f, "FireArrow", "Огненная стрела"));
-            spells.Add(new Spell(3, "SINGLEDAMAGE", 3f, 20f, 18f, "IceSpike", "едяной шип"));
+            spells.Add(new Spell(3, "SINGLEDAMAGE", 3f, 20f, 18f, "IceSpike", "Ледяной шип"));
             spells.Add(new Spell(4, "ALLDAMAGE", 3f, 25f, 20f, "Lightning", "Молнии"));
 
             GetImages(atlas);
