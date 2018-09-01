@@ -18,7 +18,9 @@ public class TutorLevel : MonoBehaviour
         fox = GameObject.FindGameObjectWithTag("Player");
         if (PlayerPrefs.GetInt("TutorFinished") == 1)
         {
-            CrashWall();
+            //CrashWall();
+            invisibleDoor.SetActive(false);
+            gameObject.SetActive(false);
             _wallCrashed = true;
             _bookReaded = true;
             invisibleDoor.SetActive(false);
