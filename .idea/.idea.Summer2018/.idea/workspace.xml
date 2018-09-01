@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5a7af032-a83d-4e96-a6d7-7cfc7f7bdfa0" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Summer2018/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/.idea.Summer2018/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Platform.cs" afterPath="$PROJECT_DIR$/Assets/Scripts/Platform.cs" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/TutorLevel.cs" afterPath="$PROJECT_DIR$/Assets/Scripts/TutorLevel.cs" />
       <change beforePath="$PROJECT_DIR$/Assets/TimeLevel.unity" afterPath="$PROJECT_DIR$/Assets/TimeLevel.unity" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -489,12 +486,12 @@
       <workItem from="1535699760230" duration="7535000" />
       <workItem from="1535731753742" duration="951000" />
       <workItem from="1535734975279" duration="1031000" />
-      <workItem from="1535793709892" duration="1025000" />
+      <workItem from="1535793709892" duration="1603000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="181973000" />
+    <option name="totallyTimeSpent" value="182551000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
